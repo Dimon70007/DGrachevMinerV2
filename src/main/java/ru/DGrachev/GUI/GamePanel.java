@@ -26,7 +26,7 @@ public class GamePanel extends JPanel implements IGamePanel {
         Point cellsLength = customBoardSize;
         this.width= cellsLength.x*CELL_SIZE;
         this.height= cellsLength.y*CELL_SIZE;
-        setMinimumSize(new Dimension(width,height));
+        setPreferredSize(new Dimension(width,height));
         setLayout(new FlowLayout(FlowLayout.CENTER));
         setDoubleBuffered(true);
         setVisible(true);
@@ -78,5 +78,8 @@ public class GamePanel extends JPanel implements IGamePanel {
             image=entry.getValue().getImage();
             g.drawImage(image,p.x*CELL_SIZE,p.y*CELL_SIZE,null);
         }
+//        Graphics2D g2=(Graphics2D)g;
+//        Rectangle2D rect=new Rectangle2D.Double(400,400,200,150);
+//
     }
 }

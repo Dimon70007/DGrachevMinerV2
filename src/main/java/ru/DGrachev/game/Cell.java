@@ -19,10 +19,18 @@ public enum Cell implements ICell {
     private URL url;
     private boolean isOpen=false;
     private int flag;
+    private Image image;
 
     Cell(String s) {
         this.value=s;
-        this.url = Cell.class.getResource("/src/main/resources"+value+".png");
+
+        try {
+
+            this.image = ImageIO.read(Cell.class.getResource("/src/main/resources/CLOSED.png"));
+//            this.image =ImageIO.read(Cell.class.getResourceAsStream("CLOSED.png"));
+        } catch (IOException e) {
+//            e.printStackTrace();
+        }
         this.flag=0;
 
     }
@@ -40,6 +48,10 @@ public enum Cell implements ICell {
                 return i;//метод конечно опасный, но в данном случае стринга всегда равна значению объекта)))
         }
         return -1;
+    }
+
+    public URL getUrl() {
+        return url;
     }
 
     @Override
@@ -90,13 +102,8 @@ public enum Cell implements ICell {
     }
 
     @Override
-    public Image getImage() {
-        try {
-            return ImageIO.read(url);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public Image  getImage() {
+            return image;
     }
 
 
