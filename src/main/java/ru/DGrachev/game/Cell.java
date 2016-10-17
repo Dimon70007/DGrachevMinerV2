@@ -25,9 +25,9 @@ public enum Cell implements ICell {
         this.value=s;
 
         try {
+            this.url=Cell.class.getResource("CLOSED.png");
+            this.image = ImageIO.read(url);
 
-            this.image = ImageIO.read(Cell.class.getResource("/src/main/resources/CLOSED.png"));
-//            this.image =ImageIO.read(Cell.class.getResourceAsStream("CLOSED.png"));
         } catch (IOException e) {
 //            e.printStackTrace();
         }
