@@ -21,7 +21,7 @@ public interface IGame {
     void setFlag(Point point);
 
     default Point getBoardSize(){
-     return GameParameters.customBoardSize;
+     return GameParameters.currentBoardSize;
     }
 
     void updateGameTime();

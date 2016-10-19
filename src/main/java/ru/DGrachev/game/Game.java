@@ -21,20 +21,18 @@ public class Game implements IGame {
     private final IGenerate generator;
     private final IGUI gui;
     private Board board;
-    private IGamePanel gamepanel;
     private long beginTime;
     private long currentGameTime;
     private SimpleDateFormat simpleDateFormat=new SimpleDateFormat("hh:mm:ss");
 
     private boolean firstUserPoint=true;
 
-    public Game(Board board, IGamePanel gamePanel, IGUI gui, IGenerate generator) {
+    public Game(Board board, IGUI gui, IGenerate generator) {
         this.board = board;
-        this.gamepanel = gamePanel;
         this.generator=generator;
         this.gui=gui;
         generator.generateBoard(board);
-        gamePanel.drawBoard(resultBoardWithChangedBombs(null,false));
+        gui.drawBoard(resultBoardWithChangedBombs(null,false));
         beginTime=System.currentTimeMillis();
         gui.updateTime("00:00:00");
 
@@ -77,11 +75,11 @@ public class Game implements IGame {
 
             checkWin();
         } catch (LooseException e) {
-            gamepanel.drawBoard(resultBoardWithChangedBombs(Cell.EXPLOSION,true));
+            gui.drawBoard(resultBoardWithChangedBombs(Cell.EXPLOSION,true));
             gui.gameOver();
         } catch (WinException e) {
 
-            gamepanel.drawBoard(resultBoardWithChangedBombs(Cell.BOMB,true));
+            gui.drawBoard(resultBoardWithChangedBombs(Cell.BOMB,true));
             gui.congratulations();
             saveCurrentGameTime();
         }
@@ -111,8 +109,8 @@ public class Game implements IGame {
         //посчитал что время дешевле всего хранить в милисекундах а не в объекте
         //тем более что вызов этого метода происходит 1 раз за игру
         LocalTime locGameTime = LocalTime.ofSecondOfDay((currentGameTime)/1000);
-        String record=locGameTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-        //// TODO: 13.10.16 написать чтобы сохранялись результаты в файл
+        String recordTime=locGameTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+
     }
 
     private void openCellsOnBoard(Point point, ICell targetCell) {

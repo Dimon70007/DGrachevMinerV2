@@ -11,7 +11,7 @@ import static ru.DGrachev.game.GameParameters.CELL_SIZE;
 /**
  * Created by OTBA}|{HbIu` on 12.10.16.
  */
-public abstract class AbstractUserInput implements ActionListener{
+public abstract class AbstractUserInput {
 
     protected IGamePanel gamePanel;
     protected IGame game;

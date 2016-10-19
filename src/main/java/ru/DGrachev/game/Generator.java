@@ -3,7 +3,7 @@ package ru.DGrachev.game;
 import java.awt.*;
 import java.util.Random;
 
-import static ru.DGrachev.game.GameParameters.customBombsCount;
+import static ru.DGrachev.game.GameParameters.currentBombsCount;
 
 /**
  * Created by OTBA}|{HbIu` on 12.10.16.
@@ -25,7 +25,7 @@ public class Generator implements IGenerate {
         Random r=new Random();
         int maxX=board.getSize().x;
         int maxY=board.getSize().y;
-        int bombCount=customBombsCount;
+        int bombCount= currentBombsCount;
         for(int i=0;i<bombCount;i++){
             Point newPoint=new Point(Math.abs(r.nextInt()%maxX),Math.abs(r.nextInt()%maxY));
             //сначала проверяем что пользователь сюда не ткнул

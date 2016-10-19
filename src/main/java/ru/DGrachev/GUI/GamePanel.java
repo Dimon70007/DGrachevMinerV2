@@ -9,7 +9,7 @@ import java.awt.event.MouseListener;
 import java.util.Map;
 
 import static ru.DGrachev.game.GameParameters.CELL_SIZE;
-import static ru.DGrachev.game.GameParameters.customBoardSize;
+import static ru.DGrachev.game.GameParameters.currentBoardSize;
 
 /**
  * Created by OTBA}|{HbIu` on 10.10.16.
@@ -23,12 +23,10 @@ public class GamePanel extends JPanel implements IGamePanel {
 
 
     public GamePanel() {
-        Point cellsLength = customBoardSize;
+        Point cellsLength = currentBoardSize;
         this.width= cellsLength.x*CELL_SIZE;
         this.height= cellsLength.y*CELL_SIZE;
         setPreferredSize(new Dimension(width,height));
-        setLayout(new FlowLayout(FlowLayout.CENTER));
-        setDoubleBuffered(true);
         setVisible(true);
     }
 
@@ -82,4 +80,5 @@ public class GamePanel extends JPanel implements IGamePanel {
 //        Rectangle2D rect=new Rectangle2D.Double(400,400,200,150);
 //
     }
+
 }

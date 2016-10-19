@@ -1,126 +1,103 @@
 package ru.DGrachev.GUI;
 
-import ru.DGrachev.Main;
+//import com.sun.java.swing.ui.OkCancelButtonPanel;
 import ru.DGrachev.game.GameParameters;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 /**
  * Created by OTBA}|{HbIu` on 12.10.16.
  */
-public class OptionsWindow extends JDialog implements ItemListener, ActionListener {
+public class OptionsWindow extends JDialog {
+    private final ActionListener optionsListener;
+    private JOptionPane optionPane=new JOptionPane();
+//    private GUI gui;
+    private ButtonGroup rButtonGroup;
+    private JRadioButton easy,medium,hard,custom;
+    private Border buttonsBorder;
+    public JTextField x;
+    public JTextField y;
+    public JTextField bombsCount;
+//    private JButton oK,cancel;
+    private JPanel radioButtonPanel,customPanel;
+    private OkCancelButtonPanel okCancelButtonPanel;
 
-    private CheckboxGroup checkboxGroup;
-    private Checkbox easy,medium,hard,custom;
-    private JLabel checkbGroupName,inputX,inputY,inputBombsCount;
-    private JTextField x,y,bombsCount;
-    private JButton oK,cancel;
+    public OptionsWindow(GUI gui,ActionListener listener) {
+        super(gui,"OPTIONS",true);
+        this.optionsListener=listener;
+        setPreferredSize(new Dimension(500,400));
 
-    public OptionsWindow(JFrame frame, String name) {
-        super(frame,name,true);
-        setLayout(new FlowLayout(FlowLayout.CENTER));
-        setSize(400,300);
-        createCheckbGroup();
-        createCustomFields();
-        createButtons();
-        addItemListeners();
-        addActionListeners();
+        radioButtonPanel=new JPanel();
+        rButtonGroup =new ButtonGroup();
+        addRadioButton(easy,"EASY");
+        addRadioButton(medium,"MEDIUM");
+        addRadioButton(hard,"HARD");
+        addRadioButton(custom,"CUSTOM");
+        createBorderOnPanel(radioButtonPanel,BorderFactory.createEtchedBorder(),"CHOICE THE DIFFICULT");
+        add(radioButtonPanel,BorderLayout.CENTER);
+
+        customPanel=new JPanel();
+        createCustomFields(x,GameParameters.currentBoardSize.x,"CUSTOM CELLS COUNT ON X",3);
+        createCustomFields(y, GameParameters.currentBoardSize.y, "CUSTOM CELLS COUNT ON Y",3);
+        createCustomFields(bombsCount, GameParameters.currentBombsCount, "CUSTOM BOMBS COUNT",5);
+        add(customPanel,BorderLayout.SOUTH);
+
+        addActionListeners(listener);
+//        createButtons(oK,"OK");
+//        createButtons(cancel,"CANCEL");
+        add(okCancelButtonPanel,BorderLayout.AFTER_LAST_LINE);
+
+        pack();
         setVisible(true);
-
     }
 
-    private void createButtons() {
-        oK=new JButton("OK");
-        cancel=new JButton("CANCEL");
-        oK.setLayout(new FlowLayout(FlowLayout.TRAILING));
-        cancel.setLayout(new FlowLayout(FlowLayout.TRAILING));
-        oK.setVisible(true);
-        cancel.setVisible(true);
+    private void createBorderOnPanel(JPanel panel, Border border, String title) {
+        if(title!=null)
+            panel.setBorder(BorderFactory.createTitledBorder(border,title));
+        else
+            panel.setBorder(border);
+    }
+//
+//    private void createButtons(JButton button, String buttonName) {
+//        button=new JButton(buttonName);
+//        okCancelButtonPanel.add(button);
+//    }
+
+
+
+    private void createCustomFields(JTextField textField, int fieldValue, String labelName, int columnsCount) {
+        textField=new JTextField((""+fieldValue),columnsCount);
+        customPanel.add(new JLabel(labelName),BorderLayout.EAST);
+        customPanel.add(textField,BorderLayout.WEST);
     }
 
-    private void addItemListeners() {
-
-        easy.addItemListener(this);
-        medium.addItemListener(this);
-        hard.addItemListener(this);
-        custom.addItemListener(this);
-    }
-
-    private void createCustomFields() {
-        inputX=new JLabel("CUSTOM CELLS COUNT ON WIDTH",JLabel.LEFT);
-        x=new JTextField(2);
-        x.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        inputY=new JLabel("CUSTOM CELLS COUNT ON HEIGHT",JLabel.LEFT);
-        y=new JTextField(2);
-        y.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        inputBombsCount=new JLabel("CUSTOM BOMBS COUNT",JLabel.LEFT);
-        bombsCount=new JTextField(4);
-        bombsCount.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        add(inputX);
-        add(x);
-        add(inputY);
-        add(y);
-        add(inputBombsCount);
-        add(bombsCount);
-    }
-
-    private void createCheckbGroup() {
-        checkboxGroup=new CheckboxGroup();
-        checkbGroupName=new JLabel("SET DIFFICULT",JLabel.LEADING);
-        easy=new Checkbox("EASY", checkboxGroup,true);
-        medium=new Checkbox("MEDIUM", checkboxGroup,false);
-        hard=new Checkbox("HARD", checkboxGroup,false);
-        custom=new Checkbox("CUSTOM", checkboxGroup,false);
-
-        add(checkbGroupName);
-        add(easy);
-        add(medium);
-        add(hard);
-        add(custom);
-    }
-
-    public void addActionListeners() {
-        x.addActionListener(this);
-        y.addActionListener(this);
-        bombsCount.addActionListener(this);
-        oK.addActionListener(this);
-        cancel.addActionListener(this);
-    }
-
-
-    @Override
-    public void itemStateChanged(ItemEvent e) {
-        repaint();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        String strE=e.getSource().toString().toUpperCase();
-        if(("OK").equals(strE)){
-            int tmpX=Integer.valueOf(x.getText());
-            int tmpY=Integer.valueOf(y.getText());
-            int tmpBCount=Integer.valueOf(bombsCount.getText());
-
-            if(checkboxGroup.getSelectedCheckbox()==custom &&
-                    tmpX>4 &&
-                    tmpY>4 &&
-                    tmpBCount>0 && tmpBCount<(tmpX*tmpY)){
-                GameParameters.customBombsCount=tmpBCount;
-                GameParameters.customBoardSize.x=tmpX;
-                GameParameters.customBoardSize.y=tmpY;
-                Main.main(null);
-                dispose();
+    private void addRadioButton(JRadioButton rButton, String rButtonName) {
+        rButton=new JRadioButton(rButtonName, rButtonName.equalsIgnoreCase(GameParameters.currentDifficult.toString()));
+        rButton.setActionCommand(rButtonName);
+        /*{
+            String actionCommand;
+            @Override
+            public void setActionCommand(String actionCommand) {
+                super.setActionCommand(actionCommand);
+                actionCommand=rButtonName;
             }
-            dispose();
-        }
-        if (("CANCEL").equals(strE)){
-            dispose();
-        }
-        repaint();
+        };*/
+        rButtonGroup.add(rButton);
+        radioButtonPanel.add(rButton);
     }
+    public String getSelection(){
+        return rButtonGroup.getSelection().getActionCommand();
+    }
+
+    public void addActionListeners(ActionListener listener) {
+        okCancelButtonPanel =new OkCancelButtonPanel(listener);
+//        x.addActionListener(listener);
+//        y.addActionListener(listener);
+//        bombsCount.addActionListener(listener);
+    }
+
+
 }

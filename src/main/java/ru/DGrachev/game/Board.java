@@ -18,7 +18,7 @@ public class Board implements IBoard{
 
     @Override
     public Point getSize() {
-        return GameParameters.customBoardSize;
+        return GameParameters.currentBoardSize;
     }
 
     @Override

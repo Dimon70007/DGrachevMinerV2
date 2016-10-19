@@ -19,12 +19,6 @@ public class MouseGamePanelInput extends AbstractUserMouseInput {
     public MouseGamePanelInput(IGamePanel gamePanel, IGame game) {
         super(gamePanel, game);
     }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-
-    }
-
     @Override
     public void mouseClicked(MouseEvent e) {
 
@@ -38,25 +32,5 @@ public class MouseGamePanelInput extends AbstractUserMouseInput {
 
             }
         }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
     }
 }

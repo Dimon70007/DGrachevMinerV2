@@ -9,7 +9,7 @@ import java.util.Map;
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.fail;
 import static ru.DGrachev.game.GameParameters.BOMB_TYPE;
-import static ru.DGrachev.game.GameParameters.customBombsCount;
+import static ru.DGrachev.game.GameParameters.currentBombsCount;
 
 /**
  * Created by OTBA}|{HbIu` on 13.10.16.
@@ -32,7 +32,7 @@ public class GeneratorTest {
     @Test
     public void whenMinesGeneratedThenMinesCountEqualsBombCount() throws Exception {
         generator.generateMines(board,new Point(5,5),BOMB_TYPE);
-        searchOnBoard(Cell.BOMB,customBombsCount);
+        searchOnBoard(Cell.BOMB, currentBombsCount);
     }
 
 
@@ -41,7 +41,7 @@ public class GeneratorTest {
         int count=0;
         for (Map.Entry<Point,ICell> entry:board){
             c = entry.getValue();
-            if(customBombsCount==0) {
+            if(currentBombsCount ==0) {
                 assertEquals(cell, c);
             }else if(c==BOMB_TYPE) {
                 count++;
