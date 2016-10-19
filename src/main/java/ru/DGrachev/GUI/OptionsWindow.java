@@ -1,6 +1,7 @@
 package ru.DGrachev.GUI;
 
 //import com.sun.java.swing.ui.OkCancelButtonPanel;
+import ru.DGrachev.game.Difficult;
 import ru.DGrachev.game.GameParameters;
 
 import javax.swing.*;
@@ -13,7 +14,7 @@ import java.awt.event.ActionListener;
  */
 public class OptionsWindow extends JDialog {
     private final ActionListener optionsListener;
-    private JOptionPane optionPane=new JOptionPane();
+//    private JOptionPane optionPane=new JOptionPane();
 //    private GUI gui;
     private ButtonGroup rButtonGroup;
     private JRadioButton easy,medium,hard,custom;
@@ -21,9 +22,9 @@ public class OptionsWindow extends JDialog {
     public JTextField x;
     public JTextField y;
     public JTextField bombsCount;
-//    private JButton oK,cancel;
-    private JPanel radioButtonPanel,customPanel;
-    private OkCancelButtonPanel okCancelButtonPanel;
+    private JButton oK,cancel;
+    private JPanel radioButtonPanel,customPanel,okCancelButtonPanel;
+//    private OkCancelButtonPanel okCancelButtonPanel;
 
     public OptionsWindow(GUI gui,ActionListener listener) {
         super(gui,"OPTIONS",true);
@@ -32,10 +33,10 @@ public class OptionsWindow extends JDialog {
 
         radioButtonPanel=new JPanel();
         rButtonGroup =new ButtonGroup();
-        addRadioButton(easy,"EASY");
-        addRadioButton(medium,"MEDIUM");
-        addRadioButton(hard,"HARD");
-        addRadioButton(custom,"CUSTOM");
+        addRadioButton(easy, Difficult.EASY.toString());
+        addRadioButton(medium,Difficult.MEDIUM.toString());
+        addRadioButton(hard,Difficult.HARD.toString());
+        addRadioButton(custom,Difficult.CUSTOM.toString());
         createBorderOnPanel(radioButtonPanel,BorderFactory.createEtchedBorder(),"CHOICE THE DIFFICULT");
         add(radioButtonPanel,BorderLayout.CENTER);
 
@@ -46,8 +47,8 @@ public class OptionsWindow extends JDialog {
         add(customPanel,BorderLayout.SOUTH);
 
         addActionListeners(listener);
-//        createButtons(oK,"OK");
-//        createButtons(cancel,"CANCEL");
+        createButtons(oK,"OK");
+        createButtons(cancel,"CANCEL");
         add(okCancelButtonPanel,BorderLayout.AFTER_LAST_LINE);
 
         pack();
@@ -60,11 +61,11 @@ public class OptionsWindow extends JDialog {
         else
             panel.setBorder(border);
     }
-//
-//    private void createButtons(JButton button, String buttonName) {
-//        button=new JButton(buttonName);
-//        okCancelButtonPanel.add(button);
-//    }
+
+    private void createButtons(JButton button, String buttonName) {
+        button=new JButton(buttonName);
+        okCancelButtonPanel.add(button);
+    }
 
 
 
@@ -75,7 +76,8 @@ public class OptionsWindow extends JDialog {
     }
 
     private void addRadioButton(JRadioButton rButton, String rButtonName) {
-        rButton=new JRadioButton(rButtonName, rButtonName.equalsIgnoreCase(GameParameters.currentDifficult.toString()));
+        rButton=new JRadioButton(rButtonName,
+                rButtonName.equalsIgnoreCase(GameParameters.currentDifficult.toString()));
         rButton.setActionCommand(rButtonName);
         /*{
             String actionCommand;
@@ -93,7 +95,9 @@ public class OptionsWindow extends JDialog {
     }
 
     public void addActionListeners(ActionListener listener) {
-        okCancelButtonPanel =new OkCancelButtonPanel(listener);
+        oK.addActionListener(listener);
+        cancel.addActionListener(listener);
+//        okCancelButtonPanel =new OkCancelButtonPanel(listener);
 //        x.addActionListener(listener);
 //        y.addActionListener(listener);
 //        bombsCount.addActionListener(listener);
