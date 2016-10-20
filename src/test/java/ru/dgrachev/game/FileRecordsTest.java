@@ -3,38 +3,34 @@ package ru.dgrachev.game;
 import org.junit.Test;
 
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by OTBA}|{HbIu` on 19.10.16.
  */
 public class FileRecordsTest {
     private Player parsePlayer;
-    @Test
-    public void readRecordsTest() throws Exception {
-
-    }
 
     @Test
-    public void writeRecordsTest() throws Exception {
+    public void writeAndReadRecordsTest() throws Exception {
         String patternTime="00:00:";
         NavigableSet<Player> players=new TreeSet<>();
+        Player p;
         for (int i=10;i<50;i+=3){
-            FileRecords.writeRecords(new Player(patternTime+i));
+            p=new Player(patternTime+i);
+            players.add(p);
+            FileRecords.write(p);
             Thread.sleep(10);
         }
-        String s=FileRecords.readRecords();
-        Pattern pt=Pattern.compile(".*?Unknown.*?");
-        Matcher mt=pt.matcher(s);
-        int i=0;
-        while (mt.find()){
-            i++;
-        }
-        assertEquals(i,FileRecords.MAX_RECORDS);
+        Set<Player> readedPlayers=FileRecords.read();
+        players.removeAll(readedPlayers);
+        assertTrue(players.size()==0);
     }
 
     @Test

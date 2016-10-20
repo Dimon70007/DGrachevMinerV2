@@ -8,3 +8,7 @@ player- Unknown, time- 00:00:28, difficult- EASY, board width- 9, board height-9
 player- Unknown, time- 00:00:31, difficult- EASY, board width- 9, board height-9, count of bombs- 20
 player- Unknown, time- 00:00:34, difficult- EASY, board width- 9, board height-9, count of bombs- 20
 player- Unknown, time- 00:00:37, difficult- EASY, board width- 9, board height-9, count of bombs- 20
+player- Unknown, time- 00:00:40, difficult- EASY, board width- 9, board height-9, count of bombs- 20
+player- Unknown, time- 00:00:43, difficult- EASY, board width- 9, board height-9, count of bombs- 20
+player- Unknown, time- 00:00:46, difficult- EASY, board width- 9, board height-9, count of bombs- 20
+player- Unknown, time- 00:00:49, difficult- EASY, board width- 9, board height-9, count of bombs- 20

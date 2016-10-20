@@ -1,12 +1,16 @@
 package ru.dgrachev.game;
 
 import java.awt.*;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,39 +21,21 @@ import java.util.regex.Pattern;
 public class FileRecords {
 
     public static final String STATISTICS_PATH= "res/records.txt";
-    public static final int MAX_RECORDS=10;
+    public static final int MAX_RECORDS=20;
 
 
-    public static String readRecords() {
-        String result="";
-        try {
-            List<String> lines= Files.readAllLines(Paths.get(STATISTICS_PATH), StandardCharsets.UTF_8);
-            for (String line:lines){
-                result+=line+" ";
+    public static Set<Player> read() {
+        File file=new File(STATISTICS_PATH);
 
-            }
-            return result;
-        }catch(IOException e){
-            System.out.println("Input file error");
-        }
-        return result;
+        NavigableSet<Player> players= new TreeSet<>();
+        parsePlayers(players,file);
+        return players;
     }
 
-    public static void writeRecords(Player player) {
+    public static void write(Player player) {
         try{
-            File file=new File(STATISTICS_PATH);
-            NavigableSet<Player> players=new TreeSet<Player>();
-
-            parsePlayers(players);
+            Set<Player> players=read();
             players.add(player);
-
-//            int index = hasNewRecordTime(players, player);
-//
-//            if (players.size()<=index+1) {
-//                players.add(player);
-//            }else {
-//                players.add(index, player);
-//            }
 
             BufferedWriter bufferedWriter=new BufferedWriter(new FileWriter(STATISTICS_PATH));
             String line="";
@@ -69,10 +55,10 @@ public class FileRecords {
 
     }
 
-    public static void parsePlayers(NavigableSet<Player> players) {
+    public static void parsePlayers(NavigableSet<Player> players, File file) {
         try {
 
-            List<String> lines= Files.readAllLines(Paths.get(STATISTICS_PATH), StandardCharsets.UTF_8);
+            List<String> lines= Files.readAllLines(Paths.get(file.getPath()), StandardCharsets.UTF_8);
                 Pattern pt = Pattern.compile("-.+?(,|$)");//парсим строку берем все что между - и , или между - и концом строки
                 Matcher mt;
             for (String line:lines){
@@ -84,7 +70,12 @@ public class FileRecords {
                 players.add(parsePlayer(parseString));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                FileWriter fr=new FileWriter(file);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+//            e.printStackTrace();
         }
     }
 
