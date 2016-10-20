@@ -12,21 +12,24 @@ public class Player implements Comparable<Player>{
     private final Point boardSize;
     private final int bombsCount;
     private final Difficult difficult;
+    private final String localDateTime;
 
-    public Player(String player, String recordTime, Difficult difficult, Point boardSize, int bombsCount) {
+    public Player(String player, String recordTime, Difficult difficult, Point boardSize, int bombsCount,String localDateTime) {
         this.player = player;
         this.recordTime = recordTime;
         this.boardSize = boardSize;
         this.bombsCount = bombsCount;
         this.difficult = difficult;
+        this.localDateTime = localDateTime;
     }
 
-    public Player(String recordTime) {
-        this.player = GameParameters.playerName;
-        this.boardSize = GameParameters.currentBoardSize;
-        this.bombsCount = GameParameters.currentBombsCount;
-        this.difficult = GameParameters.currentDifficult;
-        this.recordTime=recordTime;
+    public Player(String recordTime, String localDateTime) {
+        this(GameParameters.playerName,
+                recordTime,
+                GameParameters.currentDifficult,
+                GameParameters.currentBoardSize,
+                GameParameters.currentBombsCount,
+                localDateTime);
     }
 
     public void setRecordTime(String recordTime) {
@@ -53,6 +56,10 @@ public class Player implements Comparable<Player>{
         return bombsCount;
     }
 
+    public String getLocalDateTime() {
+        return localDateTime;
+    }
+
     @Override
     public final String toString(){
         //        if (currentDifficult==Difficult.CUSTOM) {
@@ -74,7 +81,10 @@ public class Player implements Comparable<Player>{
                 boardSize.y +
                 ", " +
                 "count of bombs- " +
-                bombsCount;
+                bombsCount +
+                ", "+
+                "DATE- "+
+                getLocalDateTime();
     }
 
     @Override
