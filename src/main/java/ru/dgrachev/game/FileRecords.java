@@ -16,8 +16,8 @@ import java.util.regex.Pattern;
  */
 public class FileRecords {
 
-    protected static final String STATISTICS_PATH= "res/records.txt";
-    protected static final int MAX_RECORDS=10;
+    public static final String STATISTICS_PATH= "res/records.txt";
+    public static final int MAX_RECORDS=10;
 
 
     public static String readRecords() {
@@ -25,7 +25,7 @@ public class FileRecords {
         try {
             List<String> lines= Files.readAllLines(Paths.get(STATISTICS_PATH), StandardCharsets.UTF_8);
             for (String line:lines){
-                result+=line;
+                result+=line+" ";
             }
             return result;
         }catch(IOException e){
@@ -54,10 +54,10 @@ public class FileRecords {
             String line="";
             int maxRecords=MAX_RECORDS;
             for (Player p:players) {
-                bufferedWriter.write(player.toString());
-                bufferedWriter.newLine();
-                if (maxRecords<=0)
+                if (maxRecords==0)
                     break;
+                bufferedWriter.write(p.toString());
+                bufferedWriter.newLine();
                 maxRecords--;
             }
             bufferedWriter.flush();
