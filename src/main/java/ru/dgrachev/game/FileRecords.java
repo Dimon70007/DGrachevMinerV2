@@ -26,6 +26,7 @@ public class FileRecords {
             List<String> lines= Files.readAllLines(Paths.get(STATISTICS_PATH), StandardCharsets.UTF_8);
             for (String line:lines){
                 result+=line+" ";
+
             }
             return result;
         }catch(IOException e){
