@@ -5,12 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ru.dgrachev</groupId>
-    <artifactId>DGrachevMiner</artifactId>
+    <artifactId>DGrachevMinerV2</artifactId>
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>DGrachevMiner</name>
-    <url>http://maven.apache.org</url>
-    
 
     <dependencies>
         <dependency>
@@ -22,17 +19,28 @@
     </dependencies>
 
     <build>
-        <!--<resources>-->
-            <!--<resource>-->
-                <!--<directory>${basedir}/res</directory>-->
-                <!--<includes>-->
-                    <!--<include>**/*.png</include>-->
-                    <!--<include>**/*.jpg</include>-->
-                <!--</includes>-->
-            <!--</resource>-->
-        <!--</resources>-->
-
+        <resources>
+            <resource>
+                <directory>${basedir}/res</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.txt</include>
+                    <include>**/*.png</include>
+                </includes>
+            </resource>
+        </resources>
+        <testResources>
+            <testResource>
+                <directory>${basedir}/res</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.txt</include>
+                    <include>**/*.png</include>
+                </includes>
+            </testResource>
+        </testResources>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

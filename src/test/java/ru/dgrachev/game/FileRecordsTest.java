@@ -25,9 +25,16 @@ public class FileRecordsTest {
         NavigableSet<Player> players=new TreeSet<>();
         for (int i=10;i<50;i+=3){
             FileRecords.writeRecords(new Player(patternTime+i));
+            Thread.sleep(10);
         }
         String s=FileRecords.readRecords();
-        System.out.println(s);
+        Pattern pt=Pattern.compile(".*?Unknown.*?");
+        Matcher mt=pt.matcher(s);
+        int i=0;
+        while (mt.find()){
+            i++;
+        }
+        assertEquals(i,FileRecords.MAX_RECORDS);
     }
 
     @Test
@@ -42,9 +49,7 @@ public class FileRecordsTest {
         while (mt.find()){
             parseString+=mt.group();
         }
-//        System.out.println(parseString);
         parsePlayer= FileRecords.parsePlayer(parseString);
-//        System.out.println(parsePlayer.toString());
         assertEquals(p.getPlayer(),parsePlayer.getPlayer());
         assertEquals(p.getBoardSize(),parsePlayer.getBoardSize());
         assertEquals(p.getBombsCount(),parsePlayer.getBombsCount());

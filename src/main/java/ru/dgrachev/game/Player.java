@@ -64,13 +64,13 @@ public class Player implements Comparable<Player>{
                 "time- " +
                 recordTime +
                 ", " +
-                "currentDifficult- " +
+                "difficult- " +
                 difficult +
                 ", " +
-                "Board width- " +
+                "board width- " +
                 boardSize.x +
                 ", " +
-                "Board height-"+
+                "board height-"+
                 boardSize.y +
                 ", " +
                 "count of bombs- " +
