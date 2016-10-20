@@ -26,6 +26,4 @@ public interface IGame {
 
     void updateGameTime();
 
-
-
 }

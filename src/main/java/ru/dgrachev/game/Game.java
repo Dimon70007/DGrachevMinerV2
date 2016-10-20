@@ -6,6 +6,7 @@ import ru.dgrachev.game.Exceptions.WinException;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -63,7 +64,7 @@ public class Game implements IGame {
             generator.generateMines(board,point,BOMB_TYPE);
             firstUserPoint=false;
         }
-        updateCurrentGameTime();
+        updateGameTime();
         ICell cell=board.getCell(point);
         cell.setOpened();
         try {
@@ -94,22 +95,20 @@ public class Game implements IGame {
 
     @Override
     public void updateGameTime() {
-        updateCurrentGameTime();
-    }
-
-    private void updateCurrentGameTime() {
-//надеюсь этот метод вернет отличие текущего времени от времени начала игры правильно!!!
         long tmpTime=System.currentTimeMillis();
         currentGameTime=tmpTime-beginTime;
         LocalTime locGameTime = LocalTime.ofSecondOfDay((currentGameTime)/1000);
         gui.updateTime(locGameTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
     }
+
     private void saveCurrentGameTime(){
         //посчитал что время дешевле всего хранить в милисекундах а не в объекте
         //тем более что вызов этого метода происходит 1 раз за игру
         LocalTime locGameTime = LocalTime.ofSecondOfDay((currentGameTime)/1000);
         String recordTime=locGameTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-
+        LocalDateTime localDateTime=LocalDateTime.now();
+        Player p=new Player(recordTime,localDateTime.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss")));
+        FileRecords.write(p);
     }
 
     private void openCellsOnBoard(Point point, ICell targetCell) {
