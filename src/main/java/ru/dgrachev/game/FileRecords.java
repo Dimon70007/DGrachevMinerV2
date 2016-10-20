@@ -24,7 +24,7 @@ public class FileRecords {
     public static final int MAX_RECORDS=20;
 
 
-    public static Set<Player> read() {
+    public static NavigableSet<Player> read() {
         File file=new File(STATISTICS_PATH);
 
         NavigableSet<Player> players= new TreeSet<>();
@@ -89,8 +89,8 @@ public class FileRecords {
         Difficult difficult=Difficult.valueOf(modParams[2].trim());
         Point boardSize=new Point(Integer.valueOf((modParams[3]).trim()),Integer.valueOf((modParams[4]).trim()));
         int bombCount=Integer.valueOf(modParams[5].trim());
-
-        return new Player(name,time,difficult,boardSize,bombCount);
+        String localDateTime=modParams[6].trim();
+        return new Player(name,time,difficult,boardSize,bombCount,localDateTime);
     }
 
 
