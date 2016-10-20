@@ -2,6 +2,10 @@ package ru.dgrachev.game;
 
 import java.awt.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -12,20 +16,17 @@ import java.util.regex.Pattern;
  */
 public class FileRecords {
 
-    protected static final String STATISTICS_PATH="/res/records.txt";
+    protected static final String STATISTICS_PATH= "res/records.txt";
     protected static final int MAX_RECORDS=10;
 
 
     public static String readRecords() {
         String result="";
         try {
-            FileReader file=new FileReader(STATISTICS_PATH);
-            BufferedReader buffer=new BufferedReader(file);
-            String line="";
-            while((line=buffer.readLine())!=null){
+            List<String> lines= Files.readAllLines(Paths.get(STATISTICS_PATH), StandardCharsets.UTF_8);
+            for (String line:lines){
                 result+=line;
             }
-            buffer.close();
             return result;
         }catch(IOException e){
             System.out.println("Input file error");
@@ -36,12 +37,10 @@ public class FileRecords {
     public static void writeRecords(Player player) {
         try{
             File file=new File(STATISTICS_PATH);
-            file.createNewFile();
-
-
             NavigableSet<Player> players=new TreeSet<Player>();
+
+            parsePlayers(players);
             players.add(player);
-            parsePlayers(file,players);
 
 //            int index = hasNewRecordTime(players, player);
 //
@@ -52,7 +51,6 @@ public class FileRecords {
 //            }
 
             BufferedWriter bufferedWriter=new BufferedWriter(new FileWriter(STATISTICS_PATH));
-
             String line="";
             int maxRecords=MAX_RECORDS;
             for (Player p:players) {
@@ -62,6 +60,7 @@ public class FileRecords {
                     break;
                 maxRecords--;
             }
+            bufferedWriter.flush();
             bufferedWriter.close();
         }catch(IOException e){
             System.out.println("Input error");
@@ -69,41 +68,28 @@ public class FileRecords {
 
     }
 
-    public static void parsePlayers(File file, NavigableSet<Player> players) {
+    public static void parsePlayers(NavigableSet<Player> players) {
         try {
 
-
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-            String line = bufferedReader.readLine();
-
-        if(line!=null) {
-            Pattern pt = Pattern.compile("-.+?(,|$)");//парсим строку берем все что между - и , или между - и концом строки
-            Matcher mt;
-            do {
-                mt = pt.matcher(line);
-                if (mt.find()) {
-                    players.add(parsePlayer(mt.group()));
+            List<String> lines= Files.readAllLines(Paths.get(STATISTICS_PATH), StandardCharsets.UTF_8);
+                Pattern pt = Pattern.compile("-.+?(,|$)");//парсим строку берем все что между - и , или между - и концом строки
+                Matcher mt;
+            for (String line:lines){
+                mt=pt.matcher(line);
+                String parseString="";
+                while (mt.find()){
+                    parseString+=mt.group();
                 }
-                line = bufferedReader.readLine();
-            } while (line != null);
-
-            bufferedReader.close();
-        }
-        } catch (FileNotFoundException e) {
-            try {
-                FileWriter fileWriter=new FileWriter(file);
-                fileWriter.close();
-            } catch (IOException e1) {
-                e1.printStackTrace();
+                players.add(parsePlayer(parseString));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static Player parsePlayer(String group) {
+    public static Player parsePlayer(String s) {
 
-        String params=group.replaceAll("-","");//убираем минус
+        String params=s.replaceAll("-","");//убираем минус
         String[] modParams=params.split(",");//нарезаем по запятой
 
         String name=modParams[0].trim();
