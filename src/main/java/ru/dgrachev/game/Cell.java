@@ -19,11 +19,11 @@ public enum Cell implements ICell {
     private URL url;
     private boolean isOpen=false;
     private int flag;
-//    private Image image;
+    private Image image;
 
     Cell(String s) {
         this.value=s;
-        this.url=getClass().getResource("/res/"+value+".png");
+        this.url=getClass().getResource("res/" +value+".png");
         this.flag=0;
     }
 
