@@ -33,13 +33,13 @@ public class Generator implements IGenerate {
                 i--;
                 continue;
             }
-            //set the bomb
-            ICell cell=board.setCell(newPoint,bombType);
                 //if bomb allready exist - i-- and continue
-            if(cell==bombType) {
+            if(board.getCell(newPoint)==bombType) {
                 i--;
                 continue;
             }
+            //set the bomb
+            board.setCell(newPoint,bombType);
             generateNumbers(board,newPoint,bombType);
 
         }
