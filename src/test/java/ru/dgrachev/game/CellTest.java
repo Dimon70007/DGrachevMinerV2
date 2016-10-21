@@ -2,10 +2,8 @@ package ru.dgrachev.game;
 
 import org.junit.Test;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 /**
  * Created by OTBA}|{HbIu` on 14.10.16.
@@ -13,41 +11,35 @@ import java.io.IOException;
 public class CellTest {
     @Test
     public void getImage() throws Exception {
-        SwingUtilities.invokeLater(new Runnable() {
+        SwingUtilities.invokeAndWait(new Runnable() {
             @Override
             public void run() {
-                JFrame frame=new JFrame();
-                JComponent component=new JComponent() {
-                    @Override
-                    public void paintComponents(Graphics g) {
-                        super.paintComponents(g);
-                        Image img= null;
-                        try {
-                            img = ImageIO.read(Cell.class.getResourceAsStream("CLOSED.png"));
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        g.drawImage(img,100,100,null);
-                        g.fillOval(300,200,100,50);
-                    }
-                };
-
-                component.setPreferredSize(new Dimension(400,300));
-                frame.add(component);
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.setPreferredSize(new Dimension(400,300));
-                frame.pack();
-                frame.setVisible(true);
-
-                frame.repaint();
-//                System.out.println(Cell.CLOSED.getUrl());
-
+                createGUI();
             }
         });
-
-
-
-
     }
+    public static void createGUI(){
 
+        JFrame frame=new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        JPanel panel=new JPanel() {
+            @Override
+            public void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Image img;
+                img = Cell.CLOSED.getImage();
+                g.drawImage(img, 0, 0,32,32, null);
+                g.fillOval(200, 200, 100, 50);
+                repaint();
+            }
+        };
+        panel.setLayout(new FlowLayout());
+
+        frame.add(panel);
+        frame.setPreferredSize(new Dimension(400,300));
+//        frame.setLocationRelativeTo(null);
+        frame.pack();
+        frame.setVisible(true);
+//                System.out.println(Cell.CLOSED.getUrl());
+    }
 }

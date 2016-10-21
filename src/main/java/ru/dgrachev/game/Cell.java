@@ -2,8 +2,9 @@ package ru.dgrachev.game;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 /**
  * Created by OTBA}|{HbIu` on 10.10.16.
@@ -16,14 +17,14 @@ public enum Cell implements ICell {
     private final static ICell[] CELLS=Cell.class.getEnumConstants();
 
     private String value;
-    private URL url;
+    private File file;
     private boolean isOpen=false;
     private int flag;
     private Image image;
 
     Cell(String s) {
         this.value=s;
-        this.url=getClass().getResource("res/" +value+".png");
+        this.file=new File("res/" +value+".png");
         this.flag=0;
     }
 
@@ -42,9 +43,9 @@ public enum Cell implements ICell {
         return -1;
     }
 
-    public URL getUrl() {
-        return url;
-    }
+//    public URL getUrl() {
+//        return url;
+//    }
 
     @Override
     public ICell nextCell() {
@@ -94,9 +95,9 @@ public enum Cell implements ICell {
     }
 
     @Override
-    public Image  getImage() {
+    public BufferedImage getImage() {
         try {
-            return ImageIO.read(url);
+            return ImageIO.read(file);
         } catch (IOException e) {
             e.printStackTrace();
         }
