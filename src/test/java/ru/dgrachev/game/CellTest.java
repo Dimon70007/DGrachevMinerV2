@@ -2,44 +2,30 @@ package ru.dgrachev.game;
 
 import org.junit.Test;
 
-import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by OTBA}|{HbIu` on 14.10.16.
  */
 public class CellTest {
     @Test
-    public void getImage() throws Exception {
-        SwingUtilities.invokeAndWait(new Runnable() {
-            @Override
-            public void run() {
-                createGUI();
+    public void getImageTest() throws Exception {
+        Image img;
+        for (Cell cell:Cell.values()){
+            try {
+                img=cell.getImage();
+                assertTrue(img!=null);
+            } catch (IOException e){
+                e.printStackTrace();
             }
-        });
+        }
     }
-    public static void createGUI(){
 
-        JFrame frame=new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JPanel panel=new JPanel() {
-            @Override
-            public void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Image img;
-                img = Cell.CLOSED.getImage();
-                g.drawImage(img, 0, 0,32,32, null);
-                g.fillOval(200, 200, 100, 50);
-                repaint();
-            }
-        };
-        panel.setLayout(new FlowLayout());
-
-        frame.add(panel);
-        frame.setPreferredSize(new Dimension(400,300));
-//        frame.setLocationRelativeTo(null);
-        frame.pack();
-        frame.setVisible(true);
-//                System.out.println(Cell.CLOSED.getUrl());
+    @Test
+    public void whenCEmptyNextIsCOne() throws Exception{
+        assertTrue(Cell.EMPTY.nextCell()==Cell.ONE);
     }
 }

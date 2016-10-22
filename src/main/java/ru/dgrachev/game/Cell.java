@@ -46,13 +46,9 @@ public enum Cell implements ICell {
         return CELLS[nextNumber];
     }
     @Override
-    public BufferedImage getImage() {
-        try {
+    public BufferedImage getImage() throws IOException {
             return ImageIO.read(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
+
     }
 
 
