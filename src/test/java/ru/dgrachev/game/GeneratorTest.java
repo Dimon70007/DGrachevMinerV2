@@ -7,6 +7,7 @@ import java.awt.*;
 import java.util.Map;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static ru.dgrachev.game.GameParameters.BOMB_TYPE;
 import static ru.dgrachev.game.GameParameters.currentBombsCount;
@@ -16,22 +17,22 @@ import static ru.dgrachev.game.GameParameters.currentBombsCount;
  */
 public class GeneratorTest {
     private Board board=new Board();
-    private final Generator generator= new Generator();
+    private final Generator generator= new Generator(new CellState(BOMB_TYPE));
 
     @Before
     public void setUp() throws Exception {
         generator.generateBoard(board);
     }
 
-//    @Test
-//    public void whenGeneratedBoardThenAllCellIsEMPTY() throws Exception {
-//
-//        searchOnBoard(Cell.EMPTY, 0);
-//    }
+    @Test
+    public void whenGeneratedBoardThenAllCellIsEMPTY() throws Exception {
+
+        searchOnBoard(Cell.EMPTY, 0);
+    }
 
     @Test
     public void whenMinesGeneratedThenMinesCountEqualsBombCount() throws Exception {
-        generator.generateMines(board,new Point(5,5),BOMB_TYPE);
+        generator.generateMines(board,new Point(5,5));
         searchOnBoard(Cell.BOMB, currentBombsCount);
     }
 
@@ -39,11 +40,12 @@ public class GeneratorTest {
     private void searchOnBoard(Cell cell, int cBombCount){
         ICell c;
         int count=0;
-        for (Map.Entry<Point,ICell> entry:board){
-            c = entry.getValue();
-            if(currentBombsCount ==0) {
-                assertEquals(cell, c);
-            }else if(c==BOMB_TYPE) {
+        for (Map.Entry<Point,ICellState> entry:board){
+            c = entry.getValue().getCell();
+            if(cell==Cell.EMPTY){
+                assertTrue(cell==c);
+            }
+            if(c==BOMB_TYPE) {
                 count++;
             }else if(c==null) {
                 fail();

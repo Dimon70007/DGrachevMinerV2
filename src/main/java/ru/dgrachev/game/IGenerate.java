@@ -9,7 +9,7 @@ public interface IGenerate {
 
     void generateBoard(Board board);
 
-     void generateMines(Board board, Point userPoint, ICell bombType);
+     void generateMines(Board board, Point userPoint);
 
 // жуткая штука - интерфейсы - не разрешают создавать статик методы...
     //оно и понятно ))) ведь статик методы - методы уровня класса, а не инстанса

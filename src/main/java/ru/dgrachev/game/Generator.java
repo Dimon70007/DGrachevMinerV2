@@ -3,29 +3,32 @@ package ru.dgrachev.game;
 import java.awt.*;
 import java.util.Random;
 
-import static ru.dgrachev.game.GameParameters.currentBombsCount;
-
 /**
  * Created by OTBA}|{HbIu` on 12.10.16.
  */
 public class Generator implements IGenerate {
+    private ICellState bombState;
+
+    public Generator(ICellState bombState) {
+        this.bombState = bombState;
+    }
 
     @Override
-    public  void generateBoard(Board board) {
+    public void generateBoard(Board board) {
             Point size=board.getSize();
         for(int x=0;x<size.x;x++){
             for (int y=0;y<size.y;y++){
-                   board.setCell(new Point(x,y),Cell.EMPTY);
+                   board.setCellState(new Point(x,y),new CellState(Cell.EMPTY));
             }
         }
     }
 
     @Override
-    public  void generateMines(Board board, Point userPoint,ICell bombType) {
+    public void generateMines(Board board, Point userPoint) {
         Random r=new Random();
         int maxX=board.getSize().x;
         int maxY=board.getSize().y;
-        int bombCount= currentBombsCount;
+        int bombCount= GameParameters.currentBombsCount;
         for(int i=0;i<bombCount;i++){
             Point newPoint=new Point(Math.abs(r.nextInt()%maxX),Math.abs(r.nextInt()%maxY));
             //сначала проверяем что пользователь сюда не ткнул
@@ -34,42 +37,43 @@ public class Generator implements IGenerate {
                 continue;
             }
                 //if bomb allready exist - i-- and continue
-            if(board.getCell(newPoint)==bombType) {
+            if(board.getCellState(newPoint).getCell()==bombState.getCell()) {
                 i--;
                 continue;
             }
             //set the bomb
-            board.setCell(newPoint,bombType);
-            generateNumbers(board,newPoint,bombType);
+            board.setCellState(newPoint,bombState);
+            generateNumbers(board,newPoint);
 
         }
     }
 
-    private static void generateNumbers(Board board, Point newPoint, ICell bombType) {
+    private void generateNumbers(Board board, Point newPoint) {
         Point p;
         for(int x=newPoint.x-1;x<=newPoint.x+1;x++){
             for (int y=newPoint.y-1;y<=newPoint.y+1;y++) {
                 p=new Point(x,y);
-                generateCountBombsAroundPoint(board,p,bombType);
+                generateCountBombsAroundPoint(board,p);
             }
 
         }
     }
 
-    private static void generateCountBombsAroundPoint(Board board, Point newPoint, ICell bombType) {
-        ICell c = board.getCell(newPoint);
+    private void generateCountBombsAroundPoint(Board board, Point newPoint) {
+        ICellState cs = board.getCellState(newPoint);
         //скорее всего мы вышли за пределы поля или попали на бомбу
         // , поэтому пропускаем этот поинт
-        if ( c == bombType || c==null){
+        if ( cs==null || cs.getCell() == bombState.getCell()){
             return;
         }
-        if(c== Cell.EMPTY){//set ONE
-            c=board.setCell(newPoint,Cell.ONE);
+        if(cs.getCell()== Cell.EMPTY){//set ONE
+            board.setCellState(newPoint,new CellState(Cell.ONE));
             return;
         }
-        if(c.getNumber()>0){
-            c=c.nextCell();//если ячейка уже содержит цифру - мы ее увеличиваем на 1
-            board.setCell(newPoint,c);
+        if(cs.getCell().getNumber()>0){
+            //если ячейка уже содержит цифру - мы ее увеличиваем на 1
+            ICell cell=cs.getCell().nextCell();
+            board.setCellState(newPoint,new CellState(cell));
         }
     }
 
