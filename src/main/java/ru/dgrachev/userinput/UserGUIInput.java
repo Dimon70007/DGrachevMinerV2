@@ -45,7 +45,7 @@ public class UserGUIInput implements ActionListener {
                 for (Player p:records){
                     message+=p.toString()+"\n";
                 }
-                JOptionPane.showMessageDialog(gui,message);
+                JOptionPane.showMessageDialog(gui,message,"STATISTICS",JOptionPane.INFORMATION_MESSAGE);
             }
             if (e.getActionCommand().equalsIgnoreCase("ABOUT")) {
 

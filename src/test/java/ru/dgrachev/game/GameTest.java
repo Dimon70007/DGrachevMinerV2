@@ -10,9 +10,12 @@ import ru.dgrachev.game.Exceptions.WinException;
 import java.awt.*;
 import java.util.Map;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static ru.dgrachev.game.GameParameters.BOMB_TYPE;
 import static ru.dgrachev.game.GameParameters.currentBoardSize;
+import static ru.dgrachev.game.GeneratorTest.board;
+import static ru.dgrachev.game.GeneratorTest.generator;
 
 /**
  * Created by OTBA}|{HbIu` on 20.10.16.
@@ -39,18 +42,24 @@ public class GameTest {
     @Test
     public void checkWin() throws Exception {
         GameParameters.currentBombsCount=1;
-        game=new Game(GeneratorTest.board,gui);
+        game=new Game(board,gui);
 //        game.openCell(p);
 //всё это только для того чтобы не выводить во время теста гуи на экран
-        GeneratorTest.generator.generateMines(GeneratorTest.board,p);
+        generator.generateMines(board,p);
         game.openCellsOnBoard(p);
         Map<Point, ICell> cells=game.resultBoardWithChangedBombs(2);
+        int maxAllowClosedCells=0;
         try {
             game.checkWin();
-            if (GeneratorTest.board.getCellState(p).getCell()!=Cell.EMPTY)
-                checkWin();
-            fail();
-
+            ICell c;
+            for (Map.Entry<Point,ICell> entry:cells.entrySet()){
+                p=entry.getKey();
+                c=entry.getValue();
+                if (c==Cell.CLOSED){
+                    maxAllowClosedCells++;
+                }
+            }
+        assertTrue(maxAllowClosedCells<=3);
         }catch (WinException e){
 
         }

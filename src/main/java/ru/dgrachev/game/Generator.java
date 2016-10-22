@@ -7,10 +7,10 @@ import java.util.Random;
  * Created by OTBA}|{HbIu` on 12.10.16.
  */
 public class Generator implements IGenerate {
-    private ICellState bombState;
+    private ICell bombType;
 
-    public Generator(ICellState bombState) {
-        this.bombState = bombState;
+    public Generator(ICell bombType) {
+        this.bombType = bombType;
     }
 
     @Override
@@ -37,12 +37,12 @@ public class Generator implements IGenerate {
                 continue;
             }
                 //if bomb allready exist - i-- and continue
-            if(board.getCellState(newPoint).getCell()==bombState.getCell()) {
+            if(board.getCellState(newPoint).getCell()== bombType) {
                 i--;
                 continue;
             }
             //set the bomb
-            board.setCellState(newPoint,bombState);
+            board.setCellState(newPoint, new CellState(bombType));
             generateNumbers(board,newPoint);
 
         }
@@ -63,7 +63,7 @@ public class Generator implements IGenerate {
         ICellState cs = board.getCellState(newPoint);
         //скорее всего мы вышли за пределы поля или попали на бомбу
         // , поэтому пропускаем этот поинт
-        if ( cs==null || cs.getCell() == bombState.getCell()){
+        if ( cs==null || cs.getCell() == bombType){
             return;
         }
         if(cs.getCell()== Cell.EMPTY){//set ONE

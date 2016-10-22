@@ -1,6 +1,7 @@
 package ru.dgrachev.GUI;
 
 //import com.sun.java.swing.ui.OkCancelButtonPanel;
+import ru.dgrachev.Main;
 import ru.dgrachev.game.Difficult;
 import ru.dgrachev.game.GameParameters;
 
@@ -30,23 +31,26 @@ public class OptionsWindow extends JDialog implements ActionListener{
         this.gui=gui;
         setPreferredSize(new Dimension(500,400));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        radioButtonPanel=new JPanel();
+        setLayout(new BorderLayout());
+        radioButtonPanel=new JPanel(new FlowLayout(FlowLayout.CENTER));
         rButtonGroup =new ButtonGroup();
         addRadioButton(easy=new JRadioButton(), Difficult.EASY.toString());
         addRadioButton(medium=new JRadioButton(),Difficult.MEDIUM.toString());
         addRadioButton(hard=new JRadioButton(),Difficult.HARD.toString());
         addRadioButton(custom=new JRadioButton(),Difficult.CUSTOM.toString());
         createBorderOnPanel(radioButtonPanel,BorderFactory.createEtchedBorder(),"CHOICE THE DIFFICULT");
-        add(radioButtonPanel,BorderLayout.CENTER);
+        add(radioButtonPanel,BorderLayout.NORTH);
 
-        customPanel=new JPanel();
+        customPanel=new JPanel(new FlowLayout());
         createCustomFields(x=new JTextField("CUSTOM CELLS COUNT ON X"),""+GameParameters.currentBoardSize.x,3);
         createCustomFields(y=new JTextField("CUSTOM CELLS COUNT ON Y"), ""+GameParameters.currentBoardSize.y, 3);
         createCustomFields(bombsCount=new JTextField("CUSTOM BOMBS COUNT"),""+GameParameters.currentBombsCount, 5);
         createCustomFields(playerName=new JTextField("PLAYER NAME"), GameParameters.playerName, 15);
-        add(customPanel,BorderLayout.SOUTH);
+        createBorderOnPanel(customPanel,BorderFactory.createEtchedBorder(),"SET CUSTOM PARAMETERS");
+        customPanel.setPreferredSize(new Dimension(500,200));
+        add(customPanel,BorderLayout.CENTER);
 
-        okCancelButtonPanel=new JPanel();
+        okCancelButtonPanel=new JPanel(new FlowLayout());
         createButtons(oK=new JButton("OK"));
         createButtons(cancel=new JButton("CANCEL"));
         add(okCancelButtonPanel,BorderLayout.AFTER_LAST_LINE);
@@ -71,11 +75,11 @@ public class OptionsWindow extends JDialog implements ActionListener{
 
 
     private void createCustomFields(JTextField textField, String fieldValue, int columnsCount) {
-//        textField=new JTextField(fieldValue,columnsCount);
+
+        JLabel label=new JLabel(textField.getText());
         textField.setText(fieldValue);
         textField.setColumns(columnsCount);
-//        JPanel tmp=new JPanel();
-        customPanel.add(new JLabel(textField.getText()));
+        customPanel.add(label);
         customPanel.add(textField);
 
     }
@@ -162,12 +166,14 @@ public class OptionsWindow extends JDialog implements ActionListener{
                 }
                 GameParameters.playerName=pName;
                 this.dispose();
-                gui.begin();
+                Main.main(null);
+                gui.dispose();
             }
             if (("CANCEL").equalsIgnoreCase(buttonName)) {
                 this.dispose();
+                gui.repaint();
             }
-            gui.repaint();
+
         }
 
 

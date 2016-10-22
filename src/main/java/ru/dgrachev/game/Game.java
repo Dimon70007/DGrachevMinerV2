@@ -28,6 +28,8 @@ public class Game implements IGame {
     private final static int OPEN_BOMB_AS_BOMB=2;
 
     private boolean firstUserPoint=true;
+    private boolean gameOver=false;
+    private Thread t;
 
     public Game(Board board, IGUI gui, IGenerate generator) {
         this.board = board;
@@ -40,7 +42,7 @@ public class Game implements IGame {
     }
 
     public Game(Board board,IGUI gui) {
-        this(board,gui,new Generator(new CellState(BOMB_TYPE)));
+        this(board,gui,new Generator(BOMB_TYPE));
     }
 
     public Game(IGUI gui) {
@@ -52,26 +54,52 @@ public class Game implements IGame {
         if(firstUserPoint){
             generator.generateMines(board,point);
             firstUserPoint=false;
+             t=new Thread(new Runnable(){
+                public void run(){
+                    while (!gameOver){
+                        updateGameTime();
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+            t.start();
+
         }
-        updateGameTime();
         ICellState cellState=board.getCellState(point);
         try {
             checkLoose(cellState);
         } catch (LooseException e) {
+            gameOver=true;
             gui.drawBoard(resultBoardWithChangedBombs(OPEN_BOMB_AS_EXPLOSION));
             gui.gameOver();
+            joinT();
             return;
         }
         openCellsOnBoard(point);
             try {
                 checkWin();
             }catch (WinException e) {
-            gui.drawBoard(resultBoardWithChangedBombs(OPEN_BOMB_AS_BOMB));
-            gui.congratulations();
-            saveCurrentGameTime();
+                gameOver=true;
+                gui.drawBoard(resultBoardWithChangedBombs(OPEN_BOMB_AS_BOMB));
+                gui.congratulations();
+                saveCurrentGameTime();
+                joinT();
+                return;
         }
         gui.drawBoard(resultBoardWithChangedBombs(DONT_NEED_OPEN_BOMB));
 
+    }
+
+    private void joinT() {
+        try {
+            t.join();
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
     }
 
     @Override
@@ -190,29 +218,24 @@ public class Game implements IGame {
             p=entry.getKey();
             //если мы указали что нужно заменить бомбу на что-то другое (на взрыв например)
             //то в этом if() бомба заменяется на targetCell
-
-            if (cs.getCell() == BOMB_TYPE) {
-                if (flag == OPEN_BOMB_AS_BOMB) {
-                    result.put(p, BOMB_TYPE);
-                    continue;
-                }
-                if (flag == OPEN_BOMB_AS_EXPLOSION) {
-                    result.put(p, Cell.EXPLOSION);
-                    continue;
-                }
-            }
-
             if(!cs.isOpen()) {
                 if (cs.getFlag() != Cell.CLOSED) {
                     result.put(p, cs.getFlag());
                 } else {
                     result.put(p, Cell.CLOSED);
                 }
+            }else {
+                result.put(p, cs.getCell());
+            }
+            if (flag==OPEN_BOMB_AS_BOMB) {
+                if (cs.getCell()==BOMB_TYPE)
+                    result.put(p, BOMB_TYPE);
                 continue;
             }
-            //если мы дошли до этого места значит cell точно не бомба и уже открыта
-                result.put(p, cs.getCell());
-
+            if (flag==OPEN_BOMB_AS_EXPLOSION) {
+                if (cs.getCell()==BOMB_TYPE)
+                    result.put(p, Cell.EXPLOSION);
+            }
         }
         return result;
     }

@@ -72,14 +72,14 @@ public class GUI extends JFrame implements IGUI{
     public void congratulations() {
         gameOver=true;
         JLabel jl=new JLabel("Congratulations");
-        JOptionPane.showMessageDialog(this,jl);
+        JOptionPane.showMessageDialog(this,jl,jl.getText(),JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
     public void gameOver() {
         gameOver=true;
         JLabel jl=new JLabel("Game over.");
-        JOptionPane.showMessageDialog(this,jl);
+        JOptionPane.showMessageDialog(this,jl,jl.getText(),JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void addActionListener(ActionListener listener) {
@@ -94,6 +94,8 @@ public class GUI extends JFrame implements IGUI{
     @Override
     public void updateTime(String time) {
         currentGameTime=time;
+        if(gameState!=null)
+            gameState.repaint();
     }
 
     @Override
@@ -123,19 +125,7 @@ public class GUI extends JFrame implements IGUI{
         KeyGamePanelInput kInput=new KeyGamePanelInput(gamePanel,game);
         UserGUIInput uGInput=new UserGUIInput(this,game);
 
-//        SwingUtilities.invokeLater(new Runnable(){
-//            public void run(){
-//                while (!gameOver){
-//                    game.updateGameTime();
-//                    gameState.repaint();
-//                    try {
-//                        Thread.sleep(1000);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        });
+
 
     }
 

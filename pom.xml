@@ -52,62 +52,19 @@
                 </configuration>
             </plugin>
 
-            <!--<plugin>-->
-                <!--<artifactId>maven-resources-plugin</artifactId>-->
-
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>copy-resources</id>-->
-                        <!--<phase>validate</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>copy-resources</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<outputDirectory>-->
-                                <!--${basedir}/res-->
-                            <!--</outputDirectory>-->
-                            <!--<resources>-->
-                                <!--&lt;!&ndash;<resource>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<directory>src/main/resources/props</directory>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<filtering>true</filtering>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;<includes>&ndash;&gt;-->
-                                        <!--&lt;!&ndash;<include>**/*.properties</include>&ndash;&gt;-->
-                                    <!--&lt;!&ndash;</includes>&ndash;&gt;-->
-                                <!--&lt;!&ndash;</resource>&ndash;&gt;-->
-                                <!--<resource>-->
-                                    <!--<directory>res/</directory>-->
-                                    <!--<includes>-->
-                                        <!--<include>**/*.png</include>-->
-                                        <!--<include>**/*.txt</include>-->
-                                    <!--</includes>-->
-                                <!--</resource>-->
-                            <!--</resources>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-jar-plugin</artifactId>-->
-                <!--<version>3.0.2</version>-->
-                <!--<configuration>-->
-                    <!--&lt;!&ndash;<excludes>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<exclude>**/*.png</exclude>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</excludes>&ndash;&gt;-->
-                    <!--&lt;!&ndash;<includes>&ndash;&gt;-->
-                        <!--&lt;!&ndash;<include>${basedir}/*</include>&ndash;&gt;-->
-                    <!--&lt;!&ndash;</includes>&ndash;&gt;-->
-                    <!--<archive>-->
-                        <!--<index>true</index>-->
-                        <!--<manifest>-->
-                            <!--<addClasspath>true</addClasspath>-->
-                            <!--<classpathPrefix>res/</classpathPrefix>-->
-                            <!--<mainClass>src.main.java.ru.dgrachev.Main</mainClass>-->
-                        <!--</manifest>-->
-                    <!--</archive>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>src.main.java.ru.dgrachev.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
 
         </plugins>
     </build>

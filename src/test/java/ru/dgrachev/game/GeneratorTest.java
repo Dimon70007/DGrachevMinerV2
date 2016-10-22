@@ -17,7 +17,7 @@ import static ru.dgrachev.game.GameParameters.currentBombsCount;
  */
 public class GeneratorTest {
     final static Board board=new Board();
-    final static Generator generator= new Generator(new CellState(BOMB_TYPE));
+    final static Generator generator= new Generator(BOMB_TYPE);
 
     @Before
     public void setUp() throws Exception {

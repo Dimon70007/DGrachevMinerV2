@@ -25,7 +25,7 @@ public class GamePanel extends JPanel implements IGamePanel {
         Point cellsLength = currentBoardSize;
         this.width= cellsLength.x*CELL_SIZE;
         this.height= cellsLength.y*CELL_SIZE;
-        setPreferredSize(new Dimension(width,height));
+//        setPreferredSize(new Dimension(width,height));
         setBackground(Color.white);
 //        setVisible(true);
     }
