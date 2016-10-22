@@ -16,12 +16,4 @@ public interface ICell {
 //используется для расстановки цифр вокруг бомбы
     ICell nextCell();
 
-    boolean isOpen();
-
-    ICell getFlag();
-
-    ICell setFlag();
-
-    void setOpened();
-
 }

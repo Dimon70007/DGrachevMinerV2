@@ -1,7 +1,6 @@
 package ru.dgrachev.game;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -18,14 +17,10 @@ public enum Cell implements ICell {
 
     private String value;
     private File file;
-    private boolean isOpen=false;
-    private int flag;
-    private Image image;
 
     Cell(String s) {
         this.value=s;
         this.file=new File("res/" +value+".png");
-        this.flag=0;
     }
 
     @Override
@@ -38,14 +33,10 @@ public enum Cell implements ICell {
         int outOfNumericCell=9;
         for(int i=0;i<outOfNumericCell;i++){
             if(CELLS[i].getValue().equals(value))//тупо берем стрингу у текущей ячейки и по ней вытаскиваем объект
-                return i;//метод конечно опасный, но в данном случае стринга всегда равна значению объекта)))
+                return i;//метод конечно опасный, но в данном случае стринга всегда равна значению константы класса)))
         }
         return -1;
     }
-
-//    public URL getUrl() {
-//        return url;
-//    }
 
     @Override
     public ICell nextCell() {
@@ -54,46 +45,6 @@ public enum Cell implements ICell {
             return null;
         return CELLS[nextNumber];
     }
-
-    @Override
-    public boolean isOpen() {
-        return isOpen;
-    }
-
-    @Override
-    public ICell getFlag() {
-        switch (flag){
-            case 0:
-                return Cell.CLOSED;
-            case 1:
-                return Cell.FLAG;
-            case 2:
-                return Cell.QUESTION;
-        }
-        return null;
-    }
-
-    @Override
-    public ICell setFlag() {
-        switch (flag){
-            case 0:
-                flag++;
-                return Cell.CLOSED;
-            case 1:
-                flag++;
-                return Cell.FLAG;
-            case 2:
-                flag=0;
-                return Cell.QUESTION;
-        }
-        return null;
-    }
-
-    @Override
-    public void setOpened() {
-        isOpen=true;
-    }
-
     @Override
     public BufferedImage getImage() {
         try {
