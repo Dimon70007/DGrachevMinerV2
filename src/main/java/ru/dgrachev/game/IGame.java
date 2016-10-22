@@ -12,7 +12,7 @@ public interface IGame {
 
     IBoard board = null;
 
-    void checkLoose(ICell cell) throws LooseException;
+    void checkLoose(ICellState cellState) throws LooseException;
 
     void checkWin() throws WinException;
 

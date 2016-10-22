@@ -6,15 +6,15 @@ import java.util.Map;
 /**
  * Created by OTBA}|{HbIu` on 10.10.16.
  */
-public interface IBoard extends Iterable<Map.Entry<Point,ICell>>{
+public interface IBoard extends Iterable<Map.Entry<Point,ICellState>>{
 
 
     Point getSize();
 
-    ICell getCell(Point point);
+    ICellState getCellState(Point point);
 
     //закоментировал чтобы можно было сделать его package-private
-   // void setCell(Point point,ICell cell);
+   // void setCellState(Point point,ICell cell);
 
 
 }
