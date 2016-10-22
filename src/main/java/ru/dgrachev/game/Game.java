@@ -70,6 +70,7 @@ public class Game implements IGame {
             gui.congratulations();
             saveCurrentGameTime();
         }
+        gui.drawBoard(resultBoardWithChangedBombs(DONT_NEED_OPEN_BOMB));
 
     }
 
@@ -94,8 +95,10 @@ public class Game implements IGame {
 
 
     @Override
-    public void setFlag(Point point) {
+    public void setFlag(Point point)
+    {
         board.getCellState(point).setFlag();
+        gui.drawBoard(resultBoardWithChangedBombs(DONT_NEED_OPEN_BOMB));
     }
 
     @Override

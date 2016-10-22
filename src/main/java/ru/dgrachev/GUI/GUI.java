@@ -1,6 +1,7 @@
 package ru.dgrachev.GUI;
 
-import ru.dgrachev.game.*;
+import ru.dgrachev.game.Game;
+import ru.dgrachev.game.ICell;
 import ru.dgrachev.userinput.KeyGamePanelInput;
 import ru.dgrachev.userinput.MouseGamePanelInput;
 import ru.dgrachev.userinput.UserGUIInput;
@@ -23,26 +24,23 @@ public class GUI extends JFrame implements IGUI{
 
     String currentGameTime="00:00:00";
 
+    private boolean gameOver=false;
+
 
     public GUI(GamePanel gamePanel) {
         this.gamePanel = gamePanel;
-        createMenuBar();
-        createGamePanel();
-        createGameState();
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-//        setPreferredSize(new Dimension(800,600));
 
-        pack();
-        setVisible(true);
     }
 
     private void createGamePanel() {
         add(gamePanel,BorderLayout.CENTER);
+        gamePanel.setEnabled(true);
     }
 
     protected void createGameState() {
         gameState=new JPanel();
-        gameState.add(new JLabel("YOUR TIME: "));
+        gameState.add(new JLabel("TIME: "));
         gameState.add(new JLabel(currentGameTime));
         gameState.add(new JLabel("hh:mm:ss"));
         add(gameState,BorderLayout.SOUTH);
@@ -55,14 +53,14 @@ public class GUI extends JFrame implements IGUI{
         JMenu gameMenu=new JMenu("MENU");
         gameMenu.add("NEW GAME");
         gameMenu.add("OPTIONS");
-        gameMenu.add("RECORDS");
-        gameMenu.addSeparator();
+        gameMenu.add("STATISTIKS");
+//        gameMenu.addSeparator();
         gameMenu.add("EXIT");
         gameMenuBar.add(gameMenu);
 
         JMenu helpMenu=new JMenu("HELP");
         helpMenu.add("HELP");
-        helpMenu.addSeparator();
+//        helpMenu.addSeparator();
         helpMenu.add("ABOUT");
         gameMenuBar.add(helpMenu);
 
@@ -72,12 +70,16 @@ public class GUI extends JFrame implements IGUI{
 
     @Override
     public void congratulations() {
-
+        gameOver=true;
+        JLabel jl=new JLabel("Congratulations");
+        JOptionPane.showMessageDialog(this,jl);
     }
 
     @Override
     public void gameOver() {
-
+        gameOver=true;
+        JLabel jl=new JLabel("Game over.");
+        JOptionPane.showMessageDialog(this,jl);
     }
 
     public void addActionListener(ActionListener listener) {
@@ -86,12 +88,12 @@ public class GUI extends JFrame implements IGUI{
                 gameMenuBar.getMenu(i).getItem(j).addActionListener(listener);
             }
         }
+
     }
 
     @Override
     public void updateTime(String time) {
         currentGameTime=time;
-        gameState.repaint();
     }
 
     @Override
@@ -104,15 +106,37 @@ public class GUI extends JFrame implements IGUI{
         return gamePanel.getPanelSize();
     }
 
-    public void init() {
-                Board board=new Board();
-                Generator generator=new Generator();
-                Game game=new Game(board,this,generator);
-                MouseGamePanelInput mInput=new MouseGamePanelInput(this,game);
-                KeyGamePanelInput kInput=new KeyGamePanelInput(this,game);
-                this.addActionListener(new UserGUIInput(this,game));
+    public void init(){
+        createMenuBar();
+        createGamePanel();
+        createGameState();
+        pack();
+        setResizable(false);
+        setVisible(true);
 
     }
 
+
+    public void begin() {
+        Game game=new Game(this);
+        MouseGamePanelInput mInput=new MouseGamePanelInput(gamePanel,game);
+        KeyGamePanelInput kInput=new KeyGamePanelInput(gamePanel,game);
+        UserGUIInput uGInput=new UserGUIInput(this,game);
+
+//        SwingUtilities.invokeLater(new Runnable(){
+//            public void run(){
+//                while (!gameOver){
+//                    game.updateGameTime();
+//                    gameState.repaint();
+//                    try {
+//                        Thread.sleep(1000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        });
+
+    }
 
 }

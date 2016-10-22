@@ -17,7 +17,6 @@ public class KeyGamePanelInput extends AbstractUserKeyInput{
     @Override
     public void keyTyped(KeyEvent e) {
 
-
     }
 
 }

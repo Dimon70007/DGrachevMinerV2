@@ -22,11 +22,13 @@ public class MouseGamePanelInput extends AbstractUserMouseInput {
     public void mouseClicked(MouseEvent e) {
 
         Point p=this.isOnSquare(new Point(e.getX(),e.getY()));
+
         if(p!=null) {
-            if (e.getButton() == 0) {
+            if (e.getButton() == 1) {
+//                System.out.println(p.toString());
                 game.openCell(p);
             }
-            if (e.getButton() == 1) {
+            if (e.getButton() == 3) {
                 game.setFlag(p);
 
             }

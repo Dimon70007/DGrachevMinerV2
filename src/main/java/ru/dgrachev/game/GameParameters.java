@@ -21,7 +21,7 @@ public class GameParameters {
     public static Difficult currentDifficult =Difficult.EASY;
 
     public static final Cell BOMB_TYPE=Cell.BOMB;
-    public static final int CELL_SIZE=32;
+    public static final int CELL_SIZE=24;
 
     public static final String GAME_NAME="Miner V2.0";
 
