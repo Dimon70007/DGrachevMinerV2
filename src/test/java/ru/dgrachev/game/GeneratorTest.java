@@ -16,8 +16,8 @@ import static ru.dgrachev.game.GameParameters.currentBombsCount;
  * Created by OTBA}|{HbIu` on 13.10.16.
  */
 public class GeneratorTest {
-    private Board board=new Board();
-    private final Generator generator= new Generator(new CellState(BOMB_TYPE));
+    final static Board board=new Board();
+    final static Generator generator= new Generator(new CellState(BOMB_TYPE));
 
     @Before
     public void setUp() throws Exception {

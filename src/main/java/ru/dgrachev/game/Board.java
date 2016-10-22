@@ -9,11 +9,11 @@ import java.util.Map;
  * Created by OTBA}|{HbIu` on 12.10.16.
  */
 public class Board implements IBoard{
-    Map<Point,ICell> boardCells;
+    Map<Point,ICellState> boardCellsState;
 
 
     public Board() {
-        this.boardCells = new HashMap<>();
+        this.boardCellsState = new HashMap<>();
     }
 
     @Override
@@ -22,17 +22,17 @@ public class Board implements IBoard{
     }
 
     @Override
-    public ICell getCell(Point point) {
-        return boardCells.get(point);
+    public ICellState getCellState(Point point) {
+        return boardCellsState.get(point);
     }
 
 
-    ICell setCell(Point point, ICell cell) {
-        return boardCells.put(point,cell);
+    ICellState setCellState(Point point, ICellState cellState) {
+        return boardCellsState.put(point,cellState);
     }
 
     @Override
-    public Iterator<Map.Entry<Point, ICell>> iterator() {
-        return boardCells.entrySet().iterator();
+    public Iterator<Map.Entry<Point, ICellState>> iterator() {
+        return boardCellsState.entrySet().iterator();
     }
 }

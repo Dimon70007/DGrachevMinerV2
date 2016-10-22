@@ -5,7 +5,6 @@ import ru.dgrachev.game.Exceptions.LooseException;
 import ru.dgrachev.game.Exceptions.WinException;
 
 import java.awt.*;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -20,10 +19,13 @@ import static ru.dgrachev.game.GameParameters.BOMB_TYPE;
 public class Game implements IGame {
     private final IGenerate generator;
     private final IGUI gui;
-    private Board board;
+    private final Board board;
     private long beginTime;
     private long currentGameTime;
-    private SimpleDateFormat simpleDateFormat=new SimpleDateFormat("hh:mm:ss");
+//    private SimpleDateFormat simpleDateFormat=new SimpleDateFormat("hh:mm:ss");
+    private final static int DONT_NEED_OPEN_BOMB=0;
+    private final static int OPEN_BOMB_AS_EXPLOSION=1;
+    private final static int OPEN_BOMB_AS_BOMB=2;
 
     private boolean firstUserPoint=true;
 
@@ -32,65 +34,68 @@ public class Game implements IGame {
         this.generator=generator;
         this.gui=gui;
         generator.generateBoard(board);
-        gui.drawBoard(resultBoardWithChangedBombs(null,false));
+        gui.drawBoard(resultBoardWithChangedBombs(DONT_NEED_OPEN_BOMB));
         beginTime=System.currentTimeMillis();
         gui.updateTime("00:00:00");
-
-
     }
 
-    @Override
-    public void checkLoose(ICell cell) throws LooseException {
-        if(cell==Cell.BOMB)
-            throw new LooseException();
+    public Game(Board board,IGUI gui) {
+        this(board,gui,new Generator(new CellState(BOMB_TYPE)));
     }
 
-    @Override
-    public void checkWin() throws WinException {
-        ICell c;
-        for(Map.Entry<Point,ICell> entry:board){
-            c=entry.getValue();
-            if(c== Cell.EMPTY || c.getNumber() >0 ){
-                if(!c.isOpen())
-                    return;
-            }
-        }
-        throw new WinException();
+    public Game(IGUI gui) {
+        this(new Board(),gui);
     }
 
     @Override
     public void openCell(Point point) {
         if(firstUserPoint){
-            generator.generateMines(board,point,BOMB_TYPE);
+            generator.generateMines(board,point);
             firstUserPoint=false;
         }
         updateGameTime();
-        ICell cell=board.getCell(point);
-        cell.setOpened();
+        ICellState cellState=board.getCellState(point);
         try {
-            checkLoose(cell);
-
-            if(cell==Cell.EMPTY)
-                openCellsOnBoard(point,cell);
-
-            checkWin();
+            checkLoose(cellState);
         } catch (LooseException e) {
-            gui.drawBoard(resultBoardWithChangedBombs(Cell.EXPLOSION,true));
+            gui.drawBoard(resultBoardWithChangedBombs(OPEN_BOMB_AS_EXPLOSION));
             gui.gameOver();
-        } catch (WinException e) {
-
-            gui.drawBoard(resultBoardWithChangedBombs(Cell.BOMB,true));
+            return;
+        }
+        openCellsOnBoard(point);
+            try {
+                checkWin();
+            }catch (WinException e) {
+            gui.drawBoard(resultBoardWithChangedBombs(OPEN_BOMB_AS_BOMB));
             gui.congratulations();
             saveCurrentGameTime();
         }
 
     }
 
+    @Override
+    public void checkLoose(ICellState cellState) throws LooseException {
+        if(cellState.getCell()==Cell.BOMB)
+            throw new LooseException();
+    }
+
+    @Override
+    public void checkWin() throws WinException {
+        ICellState cs;
+        for(Map.Entry<Point,ICellState> entry:board){
+            cs=entry.getValue();
+            if( cs.getCell() !=BOMB_TYPE){
+                if(!cs.isOpen())
+                    return;
+            }
+        }
+        throw new WinException();
+    }
 
 
     @Override
     public void setFlag(Point point) {
-        board.getCell(point).setFlag();
+        board.getCellState(point).setFlag();
     }
 
     @Override
@@ -111,29 +116,37 @@ public class Game implements IGame {
         FileRecords.write(p);
     }
 
-    private void openCellsOnBoard(Point point, ICell targetCell) {
+    public void openCellsOnBoard(Point point) {
+        ICellState cs=board.getCellState(point);
+        cs.setOpened();
+        if (cs.getCell()!=Cell.EMPTY)
+            return;//если ячейка не пустая -открываем только ее
 
-        ICell c;
         Point p;
-        Map<Point,ICell> openedCells=new HashMap<>();
-        int noExit;
+//        HashMap<Point,ICellState> cellsInOpenState=new HashMap<>();
+//        cellsInOpenState.put(point,cs);
+//        Map<Point,ICellState> tmp=new HashMap<>();
+        int exit;
         while (true) {
-            noExit=0;
-            for (Map.Entry<Point, ICell> entry : board) {
+            exit=0;
+            for (HashMap.Entry<Point, ICellState> entry : board) {
                 p = entry.getKey();
-                c = entry.getValue();
-                if (c == Cell.EMPTY && c.isOpen())
-                    noExit+=goAroundCell(p, true);
+                cs=entry.getValue();
+                if (cs.getCell()==Cell.EMPTY && cs.isOpen())
+                    exit+=goAroundCell(p, true);
             }
-            if(noExit==0)
+            if(exit==0)
                 break;//тут мы получим на поле после 2 хода игрока часть открытых ячеек пустые а часть с цифрами
+//            cellsInOpenState.putAll(tmp);
+//            tmp=new HashMap<>();
         }
 
-        for (Map.Entry<Point, ICell> entry : board) {
+        for (Map.Entry<Point, ICellState> entry : board) {
             p = entry.getKey();
-            c = entry.getValue();
-            if (c == Cell.EMPTY && c.isOpen())
-                noExit+=goAroundCell(p, false);
+            cs = entry.getValue();
+            //open closed cell around empty opened cell
+            if (cs.getCell() == Cell.EMPTY && cs.isOpen())
+                goAroundCell(p, false);
         }
 
     }
@@ -141,50 +154,64 @@ public class Game implements IGame {
     private int goAroundCell(Point point, boolean isGoToEmpty) {
         //обходим board начиная с переданной ячейки вокруг нее с радиусом 1 и если она EMPTY ставим setOpened()
         Point p;
-        ICell c;
-        int countOfChange=0;
+        ICellState cs;
+        int result=0;
+//        Map<Point,ICellState> result=new HashMap<>();
         for (int x=point.x-1;x<=point.x+1;x++){
             for(int y=point.y-1;y<=point.y+1;y++){
                 p=new Point(x,y);
-                c=board.getCell(p);
-                if(c==null || c.isOpen())
+                cs=board.getCellState(p);
+                if(cs==null || cs.isOpen())
                     continue;//скорее всего мы вышли за границу доски или ячейка уже открыта
                 if(isGoToEmpty) {
-                    //если флаг false значит мы идем +100500 раз по пустым закрытым ячейкам и открываем их
-                    if (c == Cell.EMPTY && !c.isOpen()) {
-                        c.setOpened();//open closed empty cell
-                        countOfChange++;
+                    //если isGoToEmpty значит мы идем по пустым закрытым ячейкам в радиусе 1 и открываем их
+                    if (cs.getCell() == Cell.EMPTY) {
+                        cs.setOpened();//open closed empty cell
+//                        result.put(p,cs);
+                        result++;
                     }
                 }else {
-                    c.setOpened();//тут мы открываем все закрытые ячейки в радиусе 1 от текущей
+                    cs.setOpened();//тут мы открываем все закрытые ячейки в радиусе 1 от текущей
                 }
             }
         }
-        return countOfChange;
-
+        return result;
     }
 
-    private Map<Point, ICell> resultBoardWithChangedBombs(Cell targetCell, boolean doesNeedToChangeBombsOrReturnExistingBoard) {
-        ICell c;
+    public Map<Point, ICell> resultBoardWithChangedBombs(int flag) {
+        ICellState cs;
         Point p;
-        Map<Point, ICell> tmp=new HashMap<>();
-        for(Map.Entry<Point,ICell> entry:board){
-            c=entry.getValue();
+        Map<Point, ICell> result=new HashMap<>();
+        for(Map.Entry<Point,ICellState> entry:board){
+            cs=entry.getValue();
             p=entry.getKey();
             //если мы указали что нужно заменить бомбу на что-то другое (на взрыв например)
             //то в этом if() бомба заменяется на targetCell
-            if(doesNeedToChangeBombsOrReturnExistingBoard) {
-                if (c == Cell.BOMB)
-                    tmp.put(p,targetCell);
-            }else if(!c.isOpen()) {
-                tmp.put(p, Cell.CLOSED);
-            }else if(c.getFlag()!=Cell.CLOSED) {
-                tmp.put(p, c.getFlag());
-            }else {
-                tmp.put(p, c);
+
+            if (cs.getCell() == BOMB_TYPE) {
+                if (flag == OPEN_BOMB_AS_BOMB) {
+                    result.put(p, BOMB_TYPE);
+                    continue;
+                }
+                if (flag == OPEN_BOMB_AS_EXPLOSION) {
+                    result.put(p, Cell.EXPLOSION);
+                    continue;
+                }
             }
+
+            if(!cs.isOpen()) {
+                if (cs.getFlag() != Cell.CLOSED) {
+                    result.put(p, cs.getFlag());
+                } else {
+                    result.put(p, Cell.CLOSED);
+                }
+                continue;
+            }
+            //если мы дошли до этого места значит cell точно не бомба и уже открыта
+                result.put(p, cs.getCell());
+
         }
-        return tmp;
+        return result;
     }
 
 }
