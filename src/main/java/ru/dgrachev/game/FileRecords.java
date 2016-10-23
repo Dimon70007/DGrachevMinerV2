@@ -15,14 +15,14 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static ru.dgrachev.game.GameParameters.MAX_RECORDS;
+
 /**
  * Created by otvazhniy on 18.10.16.
  */
 public class FileRecords {
 
     public static final String STATISTICS_PATH= "res/records.txt";
-    public static final int MAX_RECORDS=20;
-
 
     public static NavigableSet<Player> read() {
         File file=new File(STATISTICS_PATH);
@@ -93,42 +93,4 @@ public class FileRecords {
         return new Player(name,time,difficult,boardSize,bombCount,localDateTime);
     }
 
-
-//    private static int hasNewRecordTime(ArrayList<Player> players, Player player) {
-//        int playerTime= LocalTime.parse(player.getRecordTime()).toSecondOfDay();
-//        Player p;
-//        int index=0;
-//        for (int i=0;i<players.size();i++){
-//            p=players.get(i);
-//            int recordTime= LocalTime.parse(p.getRecordTime()).toSecondOfDay();
-//            if (player.getDifficult()==p.getDifficult()
-//                    && playerTime<recordTime)
-//                return i;
-//            index++;
-//        }
-//        return index;
-//    }
-
-//
-//    public static int searchInFile(String currentDifficult,File file) {
-//        try{
-//
-//            FileReader fileReader=new FileReader(file);
-//            BufferedReader buffer=new BufferedReader(fileReader);
-//            String line="";
-//            Pattern pt=Pattern.compile("("+currentDifficult+")");
-//            Matcher mt;
-//            for(int i=0;(line=buffer.readLine())!=null;i++){
-//                mt=pt.matcher(line);
-//                if(mt.find()){
-//                    return i;
-//                }
-//            }
-//            buffer.close();
-//        }catch(IOException e){
-//            System.out.println("Input file error");
-//        }
-//
-//        return -1;
-//    }
 }

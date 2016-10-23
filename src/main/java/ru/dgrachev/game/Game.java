@@ -140,11 +140,16 @@ public class Game implements IGame {
     private void saveCurrentGameTime(){
         //посчитал что время дешевле всего хранить в милисекундах а не в объекте
         //тем более что вызов этого метода происходит 1 раз за игру
-        LocalTime locGameTime = LocalTime.ofSecondOfDay((currentGameTime)/1000);
-        String recordTime=locGameTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-        LocalDateTime localDateTime=LocalDateTime.now();
-        Player p=new Player(recordTime,localDateTime.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss")));
-        FileRecords.write(p);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LocalTime locGameTime = LocalTime.ofSecondOfDay((currentGameTime)/1000);
+                String recordTime=locGameTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+                LocalDateTime localDateTime=LocalDateTime.now();
+                Player p=new Player(recordTime,localDateTime.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss")));
+                FileRecords.write(p);
+            }
+        }).start();
     }
 
     public void openCellsOnBoard(Point point) {

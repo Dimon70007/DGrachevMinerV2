@@ -24,5 +24,5 @@ public class GameParameters {
     public static final int CELL_SIZE=24;
 
     public static final String GAME_NAME="Miner V2.0";
-
+    public static final int MAX_RECORDS=20;
 }
