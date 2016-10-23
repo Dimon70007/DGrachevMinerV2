@@ -43,9 +43,10 @@ public class GameTest {
     public void checkWin() throws Exception {
         GameParameters.currentBombsCount=1;
         game=new Game(board,gui);
-//        game.openCell(p);
-//всё это только для того чтобы не выводить во время теста гуи на экран
         generator.generateMines(board,p);
+
+        if (board.getCellState(p).getCell()==BOMB_TYPE)
+            fail();
         game.openCellsOnBoard(p);
         Map<Point, ICell> cells=game.resultBoardWithChangedBombs(2);
         int maxAllowClosedCells=0;

@@ -20,7 +20,7 @@ public enum Cell implements ICell {
 
     Cell(String s) {
         this.value=s;
-        this.file =new File("res/" +value+".png");
+        this.file =new File("src/res/" +value+".png");
     }
 
     @Override

@@ -22,7 +22,7 @@ import static ru.dgrachev.game.GameParameters.MAX_RECORDS;
  */
 public class FileRecords {
 
-    public static final String STATISTICS_PATH= "res/records.txt";
+    public static final String STATISTICS_PATH= "src/res/records.txt";
 
     public static NavigableSet<Player> read() {
         File file=new File(STATISTICS_PATH);

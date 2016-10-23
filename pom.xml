@@ -21,7 +21,7 @@
     <build>
         <resources>
             <resource>
-                <directory>${basedir}/res</directory>
+                <directory>src/res/</directory>
                 <includes>
                     <include>**/*.properties</include>
                     <include>**/*.txt</include>
@@ -31,7 +31,7 @@
         </resources>
         <testResources>
             <testResource>
-                <directory>${basedir}/res</directory>
+                <directory>src/res/</directory>
                 <includes>
                     <include>**/*.properties</include>
                     <include>**/*.txt</include>
@@ -59,17 +59,11 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <!--<addClasspath>true</addClasspath>-->
-                            <!--<classpathPrefix>res/</classpathPrefix>-->
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>src/res/</classpathPrefix>
                             <mainClass>ru.dgrachev.Main</mainClass>
                         </manifest>
                     </archive>
-                    <includes>
-                        <include>**/*.png</include>
-                        <include>**/*.txt</include>
-                        <include>**/*.properties</include>
-                        <include>**/*.classes</include>
-                    </includes>
                     <excludes>
                         <exclude>*.png</exclude>
                         <exclude>*.txt</exclude>
@@ -88,10 +82,10 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/res</outputDirectory>
+                            <outputDirectory>${project.build.directory}/src/res</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${basedir}/res</directory>
+                                    <directory>${basedir}/src/res</directory>
                                     <filtering>true</filtering>
                                     <includes>
                                         <include>**/*.png</include>
