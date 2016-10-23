@@ -44,6 +44,9 @@ public class FileRecordsTest {
             assertEquals(p.toString(),readP.toString());
 
         }
+        fr=new FileWriter(FileRecords.STATISTICS_PATH);
+        fr.flush();
+        fr.close();
     }
 
     @Test

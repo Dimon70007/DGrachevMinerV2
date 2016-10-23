@@ -7,7 +7,7 @@
     <groupId>ru.dgrachev</groupId>
     <artifactId>DGrachevMinerV2</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -55,17 +55,56 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.1</version>
                 <configuration>
                     <archive>
                         <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>src.main.java.ru.dgrachev.Main</mainClass>
+                            <!--<addClasspath>true</addClasspath>-->
+                            <!--<classpathPrefix>res/</classpathPrefix>-->
+                            <mainClass>ru.dgrachev.Main</mainClass>
                         </manifest>
                     </archive>
+                    <includes>
+                        <include>**/*.png</include>
+                        <include>**/*.txt</include>
+                        <include>**/*.properties</include>
+                        <include>**/*.classes</include>
+                    </includes>
+                    <excludes>
+                        <exclude>*.png</exclude>
+                        <exclude>*.txt</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <!-- here the phase you need -->
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/res</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}/res</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>**/*.png</include>
+                                        <include>**/*.txt</include>
+                                        <include>**/*.properties</include>
+                                    </includes>
+                                </resource>
 
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
