@@ -22,9 +22,8 @@ public class GUI extends JFrame implements IGUI{
 
     JPanel gameState;
 
-    String currentGameTime="00:00:00";
+    JLabel currentGameTime;
 
-    private boolean gameOver=false;
 
 
     public GUI(GamePanel gamePanel) {
@@ -40,11 +39,10 @@ public class GUI extends JFrame implements IGUI{
 
     protected void createGameState() {
         gameState=new JPanel();
-        gameState.add(new JLabel("TIME: "));
-        gameState.add(new JLabel(currentGameTime));
-        gameState.add(new JLabel("hh:mm:ss"));
-        add(gameState,BorderLayout.SOUTH);
+        currentGameTime=new JLabel("TIME: "+"00:00:00"+"hh:mm:ss");
+        gameState.add(currentGameTime);
 
+        add(gameState,BorderLayout.SOUTH);
     }
 
 
@@ -70,14 +68,12 @@ public class GUI extends JFrame implements IGUI{
 
     @Override
     public void congratulations() {
-        gameOver=true;
         JLabel jl=new JLabel("Congratulations");
         JOptionPane.showMessageDialog(this,jl,jl.getText(),JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
     public void gameOver() {
-        gameOver=true;
         JLabel jl=new JLabel("Game over.");
         JOptionPane.showMessageDialog(this,jl,jl.getText(),JOptionPane.INFORMATION_MESSAGE);
     }
@@ -93,9 +89,12 @@ public class GUI extends JFrame implements IGUI{
 
     @Override
     public void updateTime(String time) {
-        currentGameTime=time;
-        if(gameState!=null)
+
+        if(gameState!=null){
+            currentGameTime.setText("TIME: "+time+" hh:mm:ss");
             gameState.repaint();
+
+        }
     }
 
     @Override
