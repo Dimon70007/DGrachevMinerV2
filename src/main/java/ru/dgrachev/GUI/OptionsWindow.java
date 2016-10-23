@@ -10,11 +10,13 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 /**
  * Created by OTBA}|{HbIu` on 12.10.16.
  */
-public class OptionsWindow extends JDialog implements ActionListener{
+public class OptionsWindow extends JDialog implements ActionListener,ItemListener{
 //    private final ActionListener optionsListener;
 //    private JOptionPane optionPane=new JOptionPane();
     private GUI gui;
@@ -29,8 +31,9 @@ public class OptionsWindow extends JDialog implements ActionListener{
     public OptionsWindow(GUI gui) {
         super(gui,"OPTIONS",true);
         this.gui=gui;
-        setPreferredSize(new Dimension(500,400));
+        setPreferredSize(new Dimension(330,300));
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setResizable(false);
         setLayout(new BorderLayout());
         radioButtonPanel=new JPanel(new FlowLayout(FlowLayout.CENTER));
         rButtonGroup =new ButtonGroup();
@@ -47,7 +50,10 @@ public class OptionsWindow extends JDialog implements ActionListener{
         createCustomFields(bombsCount=new JTextField("CUSTOM BOMBS COUNT"),""+GameParameters.currentBombsCount, 5);
         createCustomFields(playerName=new JTextField("PLAYER NAME"), GameParameters.playerName, 15);
         createBorderOnPanel(customPanel,BorderFactory.createEtchedBorder(),"SET CUSTOM PARAMETERS");
-        customPanel.setPreferredSize(new Dimension(500,200));
+        customPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        x.setEnabled(false);
+        y.setEnabled(false);
+        bombsCount.setEnabled(false);
         add(customPanel,BorderLayout.CENTER);
 
         okCancelButtonPanel=new JPanel(new FlowLayout());
@@ -89,6 +95,7 @@ public class OptionsWindow extends JDialog implements ActionListener{
         rButton.setText(rButtonName);
         rButton.setSelected(selected);
         rButton.setActionCommand(rButtonName);
+        rButton.addItemListener(this);
         rButtonGroup.add(rButton);
         radioButtonPanel.add(rButton);
     }
@@ -109,13 +116,18 @@ public class OptionsWindow extends JDialog implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
+
         if(e.getSource() instanceof JButton) {
         String buttonName=((JButton)e.getSource()).getText();
             if (("OK").equalsIgnoreCase(buttonName)) {
+                boolean isCustomCorrect=true;
+                boolean isNameCorrect=true;
+
                 int tmpX = Integer.valueOf(this.x.getText().trim());
                 int tmpY = Integer.valueOf(this.y.getText().trim());
                 int tmpBCount = Integer.valueOf(this.bombsCount.getText().trim());
-                String pName=this.playerName.getText().trim();
+                String pName=GameParameters.playerName;
 
                 if ("EASY".equalsIgnoreCase(
                         this.getSelection())) {
@@ -153,7 +165,10 @@ public class OptionsWindow extends JDialog implements ActionListener{
                         GameParameters.currentBombsCount = tmpBCount;
                         GameParameters.currentBoardSize.x = tmpX;
                         GameParameters.currentBoardSize.y = tmpY;
-                    } else if (tmpX == 0 || tmpY == 0 || tmpBCount == 0) {
+
+                        isCustomCorrect=true;
+                    } else if (tmpX <= 0 || tmpY <= 0 || tmpBCount <= 0) {
+                        isCustomCorrect=false;
                         String message="You have been chose CUSTOM currentDifficult,\n" +
                                 "that's why you should enter CELLS COUNTS\n" +
                                 "bigger then 4x4 and CUSTOM BOMBS COUNT= \n" +
@@ -163,11 +178,22 @@ public class OptionsWindow extends JDialog implements ActionListener{
                                 message,
                                 "Wrong Parameters", JOptionPane.WARNING_MESSAGE);
                     }
+
+
                 }
-                GameParameters.playerName=pName;
-                this.dispose();
-                Main.main(null);
-                gui.dispose();
+                if (this.playerName.getText().trim().length()==0){
+                    isNameCorrect=false;
+                    JOptionPane.showMessageDialog(this,"Please enter player's name","Empty player name",JOptionPane.WARNING_MESSAGE);
+                }else {
+                    pName=this.playerName.getText().trim();
+                    isNameCorrect=true;
+                }
+                if (isCustomCorrect && isNameCorrect){
+                    GameParameters.playerName=pName;
+                    this.dispose();
+                    Main.main(null);
+                    gui.dispose();
+                }
             }
             if (("CANCEL").equalsIgnoreCase(buttonName)) {
                 this.dispose();
@@ -180,5 +206,20 @@ public class OptionsWindow extends JDialog implements ActionListener{
 
 
 
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        if(e.getSource() instanceof JRadioButton) {
+            if (custom.isSelected()) {
+                x.setEnabled(true);
+                y.setEnabled(true);
+                bombsCount.setEnabled(true);
+            } else {
+                x.setEnabled(false);
+                y.setEnabled(false);
+                bombsCount.setEnabled(false);
+            }
+        }
     }
 }
