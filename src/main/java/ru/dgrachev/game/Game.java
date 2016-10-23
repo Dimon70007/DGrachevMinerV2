@@ -37,7 +37,6 @@ public class Game implements IGame {
         this.gui=gui;
         generator.generateBoard(board);
         gui.drawBoard(resultBoardWithChangedBombs(DONT_NEED_OPEN_BOMB));
-        beginTime=System.currentTimeMillis();
         gui.updateTime("00:00:00");
     }
 
@@ -54,6 +53,7 @@ public class Game implements IGame {
         if(firstUserPoint){
             generator.generateMines(board,point);
             firstUserPoint=false;
+            beginTime=System.currentTimeMillis();
              t=new Thread(new Runnable(){
                 public void run(){
                     while (!gameOver){
