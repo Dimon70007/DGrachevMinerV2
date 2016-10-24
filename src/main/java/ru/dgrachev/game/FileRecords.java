@@ -81,6 +81,7 @@ public class FileRecords {
                 while (mt.find()){
                     parseString+=mt.group();
                 }
+
                 players.add(parsePlayer(parseString));
             }
         } catch (IOException e) {
