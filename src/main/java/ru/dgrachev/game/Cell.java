@@ -2,8 +2,8 @@ package ru.dgrachev.game;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
+
 
 /**
  * Created by OTBA}|{HbIu` on 10.10.16.
@@ -16,11 +16,16 @@ public enum Cell implements ICell {
     private final static ICell[] CELLS=Cell.class.getEnumConstants();
 
     private String value;
-    private File file;
+    private BufferedImage stream;
 
     Cell(String s) {
         this.value=s;
-        this.file =new File("src/res/" +value+".png");
+        try {
+            this.stream = ImageIO.read(getClass().getClassLoader().getResourceAsStream(value + ".png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -47,7 +52,7 @@ public enum Cell implements ICell {
     }
     @Override
     public BufferedImage getImage() throws IOException {
-            return ImageIO.read(file);
+            return stream;
 
     }
 
