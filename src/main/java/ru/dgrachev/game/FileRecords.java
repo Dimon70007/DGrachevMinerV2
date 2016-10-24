@@ -1,17 +1,12 @@
 package ru.dgrachev.game;
 
 import java.awt.*;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.*;
 import java.util.List;
-import java.util.NavigableSet;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,13 +17,11 @@ import static ru.dgrachev.game.GameParameters.MAX_RECORDS;
  */
 public class FileRecords {
 
-    public static final String STATISTICS_PATH= "src/res/records.txt";
-
+    public static final String STATISTICS_PATH= "./records.txt";
     public static NavigableSet<Player> read() {
-        File file=new File(STATISTICS_PATH);
 
         NavigableSet<Player> players= new TreeSet<>();
-        parsePlayers(players,file);
+        parsePlayers(players);
         return players;
     }
 
@@ -55,10 +48,10 @@ public class FileRecords {
 
     }
 
-    public static void parsePlayers(NavigableSet<Player> players, File file) {
+    public static void parsePlayers(NavigableSet<Player> players) {
         try {
 
-            List<String> lines= Files.readAllLines(Paths.get(file.getPath()), StandardCharsets.UTF_8);
+            List<String> lines= Files.readAllLines(Paths.get(STATISTICS_PATH), StandardCharsets.UTF_8);
                 Pattern pt = Pattern.compile("-.+?(,|$)");//парсим строку берем все что между - и , или между - и концом строки
                 Matcher mt;
             for (String line:lines){
@@ -71,7 +64,7 @@ public class FileRecords {
             }
         } catch (IOException e) {
             try {
-                FileWriter fr=new FileWriter(file);
+                FileWriter fr=new FileWriter(STATISTICS_PATH);
             } catch (IOException e1) {
                 e1.printStackTrace();
             }

@@ -16,12 +16,12 @@ public enum Cell implements ICell {
     private final static ICell[] CELLS=Cell.class.getEnumConstants();
 
     private String value;
-    private BufferedImage stream;
+    private BufferedImage image;
 
     Cell(String s) {
         this.value=s;
         try {
-            this.stream = ImageIO.read(getClass().getClassLoader().getResourceAsStream(value + ".png"));
+            this.image = ImageIO.read(getClass().getClassLoader().getResourceAsStream("src/res/"+value + ".png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -52,7 +52,7 @@ public enum Cell implements ICell {
     }
     @Override
     public BufferedImage getImage() throws IOException {
-            return stream;
+            return image;
 
     }
 

@@ -19,9 +19,10 @@
     </dependencies>
 
     <build>
+
         <resources>
             <resource>
-                <directory>src/res/</directory>
+                <directory>${basedir}/src/res/</directory>
                 <includes>
                     <include>**/*.properties</include>
                     <include>**/*.txt</include>
@@ -31,7 +32,7 @@
         </resources>
         <testResources>
             <testResource>
-                <directory>src/res/</directory>
+                <directory>${basedir}/src/res/</directory>
                 <includes>
                     <include>**/*.properties</include>
                     <include>**/*.txt</include>
@@ -59,15 +60,11 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>src/res/</classpathPrefix>
+                            <!--<addClasspath>true</addClasspath>-->
+                            <!--<classpathPrefix>lib/</classpathPrefix>-->
                             <mainClass>ru.dgrachev.Main</mainClass>
                         </manifest>
                     </archive>
-                    <excludes>
-                        <exclude>*.png</exclude>
-                        <exclude>*.txt</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -82,18 +79,15 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/src/res</outputDirectory>
+                            <outputDirectory>${project.build.outputDirectory}/src/res</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>${basedir}/src/res</directory>
-                                    <filtering>true</filtering>
+                                    <filtering>false</filtering>
                                     <includes>
                                         <include>**/*.png</include>
-                                        <include>**/*.txt</include>
-                                        <include>**/*.properties</include>
                                     </includes>
                                 </resource>
-
                             </resources>
                         </configuration>
                     </execution>
