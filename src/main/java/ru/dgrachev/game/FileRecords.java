@@ -1,9 +1,10 @@
 package ru.dgrachev.game;
 
+import ru.dgrachev.Main;
+
 import java.awt.*;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -15,6 +16,8 @@ import java.util.List;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,14 +29,15 @@ import static ru.dgrachev.game.GameParameters.MAX_RECORDS;
 public class FileRecords {
 
     public final static String RECORDS ="records.txt";
-    public final static String FULL_STATICTICS_PATH= RECORDS;
-//    private final static Path path;
+    public final static String FULL_STATICTICS_PATH;
+    private static PrintWriter printWriter;
+    private final static Path path;
 
 //вроде как долэжна быть инициализация статик констант
-//    static {
-//        path=getApplicationStartUp();
-//        FULL_STATICTICS_PATH =path.toString()+path.getFileSystem().getSeparator()+ RECORDS;
-//    }
+    static {
+        path=getApplicationStartUp();
+        FULL_STATICTICS_PATH =path.toString()+path.getFileSystem().getSeparator()+ RECORDS;
+    }
 
     public static NavigableSet<Player> read() {
 
@@ -43,23 +47,24 @@ public class FileRecords {
     }
 
     public static void write(Player player) {
+
         try{
 
             Set<Player> players=read();
             players.add(player);
-            BufferedWriter bufferedWriter=new BufferedWriter(new FileWriter(FULL_STATICTICS_PATH));
+            printWriter =new PrintWriter(FULL_STATICTICS_PATH);
             String line="";
             int maxRecords=MAX_RECORDS;
             for (Player p:players) {
                 if (maxRecords==0)
                     break;
-                bufferedWriter.write(p.toString());
-                bufferedWriter.newLine();
+                printWriter.println(p.toString());
                 maxRecords--;
             }
-            bufferedWriter.close();
         }catch(IOException e){
-            System.out.println("Input error");
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
+        }finally {
+            printWriter.close();
         }
 
     }
@@ -80,11 +85,12 @@ public class FileRecords {
             }
         } catch (IOException e) {
             try {
-                FileWriter fr=new FileWriter(FULL_STATICTICS_PATH);
+                printWriter=new PrintWriter(FULL_STATICTICS_PATH);
             } catch (IOException e1) {
-                e1.printStackTrace();
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
+            }finally {
+                printWriter.close();
             }
-//            e.printStackTrace();
         }
     }
 
@@ -118,24 +124,11 @@ public class FileRecords {
             } catch (Exception ipe) {
                 path = Paths.get(startupUrl.getPath());
             }
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
+        } catch (IllegalArgumentException | SecurityException | URISyntaxException e) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
         }
-
-//        catch (FileNotFoundException e) {
-//            try {
-//                path = Paths.get(new URL(startupUrl.getPath()).getPath());
-//            } catch (Exception ipe) {
-//                path = Paths.get(startupUrl.getPath());
-//            }
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//        }
-        path = path.getParent();
+        if (path!=null)
+            path = path.getParent();
         return path;
     }
 
