@@ -2,6 +2,8 @@ package ru.dgrachev.game;
 
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.util.NavigableSet;
 import java.util.TreeSet;
@@ -14,8 +16,9 @@ import static org.junit.Assert.assertEquals;
  * Created by OTBA}|{HbIu` on 19.10.16.
  */
 public class FileRecordsTest {
+    private File file=new File(FileRecords.FULL_STATICTICS_PATH);
     private Player parsePlayer;
-
+    private FileWriter writer;
     @Test
     public void writeAndReadRecordsTest() throws Exception {
         String patternTime="00:00:";
@@ -23,9 +26,13 @@ public class FileRecordsTest {
         Player p;
         //очищаем файл статистики от предыдущих результатов
         //чтобы проверить что чтение и запись проходят на 100 процентов правильно
-        FileWriter fr=new FileWriter(FileRecords.STATISTICS_PATH);
-        fr.flush();
-        fr.close();
+
+
+        try{
+             writer =new FileWriter(file);
+        }catch (FileNotFoundException e){
+            e.printStackTrace();
+        }
         //записываем
         for (int i=10;i<50;i+=3){
             p=new Player(patternTime+i,PlayerTest.localDateTime);
@@ -44,9 +51,11 @@ public class FileRecordsTest {
             assertEquals(p.toString(),readP.toString());
 
         }
-        fr=new FileWriter(FileRecords.STATISTICS_PATH);
-        fr.flush();
-        fr.close();
+        writer.flush();
+//        System.out.println(file.getAbsolutePath());
+        //удаляем тестовый файл чтоб мусор не разводить
+        file.delete();
+        writer.close();
     }
 
     @Test
