@@ -11,12 +11,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertEquals;
+import static ru.dgrachev.game.FileRecords.FULL_STATICTICS_PATH;
 
 /**
  * Created by OTBA}|{HbIu` on 19.10.16.
  */
 public class FileRecordsTest {
-    private File file=new File(FileRecords.FULL_STATICTICS_PATH);
+    private File file= new File(FULL_STATICTICS_PATH.toString());
     private Player parsePlayer;
     private FileWriter writer;
     @Test

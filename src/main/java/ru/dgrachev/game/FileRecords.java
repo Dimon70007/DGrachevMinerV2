@@ -3,12 +3,10 @@ package ru.dgrachev.game;
 import ru.dgrachev.Main;
 
 import java.awt.*;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,14 +27,18 @@ import static ru.dgrachev.game.GameParameters.MAX_RECORDS;
 public class FileRecords {
 
     public final static String RECORDS ="records.txt";
-    public final static String FULL_STATICTICS_PATH;
-    private static PrintWriter printWriter;
-    private final static Path path;
+    public final static Path FULL_STATICTICS_PATH;
+    private static BufferedWriter writer;
+    private final static File curDir;
 
-//вроде как долэжна быть инициализация статик констант
+//вроде как должна быть инициализация статик констант
     static {
-        path=getApplicationStartUp();
-        FULL_STATICTICS_PATH =path.toString()+path.getFileSystem().getSeparator()+ RECORDS;
+        curDir =new File(".");
+        FULL_STATICTICS_PATH =Paths.get(curDir.getPath(), RECORDS);
+    //Paths.get(String ... args);=>curDir="arg1/arg2/arg3/..."
+    //или можно еще curDir.resolve(RECORDS);=> curDir="curDir"+"/"+"records.txt"
+    //при чем разделитель берется в зависимости от ОС автоматом
+
     }
 
     public static NavigableSet<Player> read() {
@@ -49,22 +51,25 @@ public class FileRecords {
     public static void write(Player player) {
 
         try{
-
             Set<Player> players=read();
             players.add(player);
-            printWriter =new PrintWriter(FULL_STATICTICS_PATH);
-            String line="";
+            writer=Files.newBufferedWriter(FULL_STATICTICS_PATH,StandardCharsets.UTF_8);
             int maxRecords=MAX_RECORDS;
             for (Player p:players) {
                 if (maxRecords==0)
                     break;
-                printWriter.println(p.toString());
+                writer.write(p.toString());
+                writer.newLine();
                 maxRecords--;
             }
         }catch(IOException e){
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
         }finally {
-            printWriter.close();
+            try {
+                writer.close();
+            } catch (IOException e) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
+            }
         }
 
     }
@@ -72,8 +77,9 @@ public class FileRecords {
     public static void parsePlayers(NavigableSet<Player> players) {
         try {
 
-            List<String> lines= Files.readAllLines(Paths.get(FULL_STATICTICS_PATH), StandardCharsets.UTF_8);
-                Pattern pt = Pattern.compile("-.+?(,|$)");//парсим строку берем все что между - и , или между - и концом строки
+            List<String> lines= Files.readAllLines(FULL_STATICTICS_PATH, StandardCharsets.UTF_8);
+            //парсим строку берем все что между - и , или между - и концом строки
+            Pattern pt = Pattern.compile("-.+?(,|$)");
                 Matcher mt;
             for (String line:lines){
                 mt=pt.matcher(line);
@@ -86,12 +92,17 @@ public class FileRecords {
             }
         } catch (IOException e) {
             try {
-                printWriter=new PrintWriter(FULL_STATICTICS_PATH);
+                writer=Files.newBufferedWriter(FULL_STATICTICS_PATH, StandardCharsets.UTF_8);
             } catch (IOException e1) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
             }finally {
-                printWriter.close();
+                try {
+                    writer.close();
+                } catch (IOException e1) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
+                }
             }
+
         }
     }
 
@@ -109,28 +120,28 @@ public class FileRecords {
         return new Player(name,time,difficult,boardSize,bombCount,localDateTime);
     }
 
-    /**
-     * @return Путь к каталогу, в котором расположен jar-файл с классом
-     *         ApplicationStartUpPath.
-     */
-    public static Path getApplicationStartUp() {
-        URL startupUrl = FileRecords.class.getProtectionDomain().getCodeSource()
-                .getLocation();
-        Path path = null;
-        try {
-            path = Paths.get(startupUrl.toURI());
-        } catch (FileSystemNotFoundException e) {
-            try {
-                path = Paths.get(new URL(startupUrl.getPath()).getPath());
-            } catch (Exception ipe) {
-                path = Paths.get(startupUrl.getPath());
-            }
-        } catch (IllegalArgumentException | SecurityException | URISyntaxException e) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
-        }
-        if (path!=null)
-            path = path.getParent();
-        return path;
-    }
+//    /**
+//     * @return Путь к каталогу, в котором расположен jar-файл с классом
+//     *         ApplicationStartUpPath.
+//     */
+//    public static Path getApplicationStartUp() {
+//        URL startupUrl = FileRecords.class.getProtectionDomain().getCodeSource()
+//                .getLocation();
+//        Path curDir = null;
+//        try {
+//            curDir = Paths.get(startupUrl.toURI());
+//        } catch (FileSystemNotFoundException e) {
+//            try {
+//                curDir = Paths.get(new URL(startupUrl.getPath()).getPath());
+//            } catch (Exception ipe) {
+//                curDir = Paths.get(startupUrl.getPath());
+//            }
+//        } catch (IllegalArgumentException | SecurityException | URISyntaxException e) {
+//            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
+//        }
+//        if (curDir!=null)
+//            curDir = curDir.getParent();
+//        return curDir;
+//    }
 
 }
