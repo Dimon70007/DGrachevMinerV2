@@ -50,6 +50,8 @@ public class Game implements IGame {
 
     @Override
     public void openCell(Point point) {
+        if (gameOver)
+            return;
         if(firstUserPoint){
             generator.generateMines(board,point);
             firstUserPoint=false;
@@ -125,6 +127,8 @@ public class Game implements IGame {
     @Override
     public void setFlag(Point point)
     {
+        if (gameOver)
+            return;
         board.getCellState(point).setFlag();
         gui.drawBoard(resultBoardWithChangedBombs(DONT_NEED_OPEN_BOMB));
     }
