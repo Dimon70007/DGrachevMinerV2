@@ -111,6 +111,7 @@ public class GUI extends JFrame implements IGUI{
         createMenuBar();
         createGamePanel();
         createGameState();
+        setLocationByPlatform(true);
         pack();
         setResizable(false);
         setVisible(true);

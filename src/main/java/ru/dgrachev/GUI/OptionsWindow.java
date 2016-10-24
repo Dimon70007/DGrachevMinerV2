@@ -19,6 +19,8 @@ import java.awt.event.ItemListener;
 public class OptionsWindow extends JDialog implements ActionListener,ItemListener{
 //    private final ActionListener optionsListener;
 //    private JOptionPane optionPane=new JOptionPane();
+    private final static Dimension optSize=new Dimension(330,300);
+    private final static int SHIFT_OPT_WINDOW=30;
     private GUI gui;
     private ButtonGroup rButtonGroup;
     private JRadioButton easy,medium,hard,custom;
@@ -31,7 +33,11 @@ public class OptionsWindow extends JDialog implements ActionListener,ItemListene
     public OptionsWindow(GUI gui) {
         super(gui,"OPTIONS",true);
         this.gui=gui;
-        setPreferredSize(new Dimension(330,300));
+        setBounds(gui.getBounds().x+SHIFT_OPT_WINDOW,
+                gui.getBounds().y+SHIFT_OPT_WINDOW,
+                optSize.width,
+                optSize.height);
+        setPreferredSize(optSize);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setResizable(false);
         setLayout(new BorderLayout());

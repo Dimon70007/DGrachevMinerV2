@@ -26,14 +26,14 @@ import static ru.dgrachev.game.GameParameters.MAX_RECORDS;
 public class FileRecords {
 
     public final static String RECORDS ="records.txt";
-    public final static String FULL_STATICTICS_PATH;
-    private final static Path path;
+    public final static String FULL_STATICTICS_PATH= RECORDS;
+//    private final static Path path;
 
 //вроде как долэжна быть инициализация статик констант
-    static {
-        path=getApplicationStartUp();
-        FULL_STATICTICS_PATH =path.toString()+path.getFileSystem().getSeparator()+ RECORDS;
-    }
+//    static {
+//        path=getApplicationStartUp();
+//        FULL_STATICTICS_PATH =path.toString()+path.getFileSystem().getSeparator()+ RECORDS;
+//    }
 
     public static NavigableSet<Player> read() {
 
@@ -57,7 +57,6 @@ public class FileRecords {
                 bufferedWriter.newLine();
                 maxRecords--;
             }
-            bufferedWriter.flush();
             bufferedWriter.close();
         }catch(IOException e){
             System.out.println("Input error");
