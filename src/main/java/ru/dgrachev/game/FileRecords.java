@@ -64,9 +64,6 @@ public class FileRecords {
         }
 
     }
-    public static void clearRecords(){
-
-    }
 
     public static void parsePlayers(NavigableSet<Player> players) {
         try {
