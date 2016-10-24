@@ -26,7 +26,7 @@ public class GameTest {
     Point p=new Point(1,1);
     Game game;
     @Test
-    public void checkLoose() throws Exception {
+    public void checkLooseTest() throws Exception {
         GameParameters.currentBombsCount= (int) (currentBoardSize.x*currentBoardSize.y-2);
         game=new Game(gui);
         game.openCell(p);
@@ -40,27 +40,24 @@ public class GameTest {
     }
 
     @Test
-    public void checkWin() throws Exception {
+    public void checkWinTest() throws Exception {
         GameParameters.currentBombsCount=1;
         game=new Game(board,gui);
-        generator.generateMines(board,p);
-
-        if (board.getCellState(p).getCell()==BOMB_TYPE)
-            fail();
-        game.openCellsOnBoard(p);
-        Map<Point, ICell> cells=game.resultBoardWithChangedBombs(2);
         int maxAllowClosedCells=0;
         try {
-            game.checkWin();
-            ICell c;
-            for (Map.Entry<Point,ICell> entry:cells.entrySet()){
+            checkWinHelper();
+            ICellState c;
+            for (Map.Entry<Point,ICellState> entry:board){
                 p=entry.getKey();
                 c=entry.getValue();
-                if (c==Cell.CLOSED){
+                if (!c.isOpen()){
                     maxAllowClosedCells++;
                 }
             }
-        assertTrue(maxAllowClosedCells<=3);
+            //3 закрытых ячейки когда цифры находятся в углу
+            // только 1 открытая когда мы умудрились тыкнуть в цифру
+        assertTrue(maxAllowClosedCells<=3
+                || maxAllowClosedCells==currentBoardSize.x*currentBoardSize.y-1);
         }catch (WinException e){
 
         }
@@ -68,6 +65,21 @@ public class GameTest {
 
     @Test
     public void updateGameTime() throws Exception {
+
+    }
+
+    private void checkWinHelper() throws WinException {
+        generator.generateMines(board,p);
+
+        ICellState cellState=board.getCellState(p);
+        try {
+            game.checkLoose(cellState);
+        } catch (LooseException e) {
+            return;
+        }
+        game.openCellsOnBoard(p);
+
+        game.checkWin();
 
     }
 
