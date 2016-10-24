@@ -19,7 +19,6 @@
     </dependencies>
 
     <build>
-
         <resources>
             <resource>
                 <directory>${basedir}/src/res/</directory>
@@ -50,6 +49,9 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <encoding>UTF-8</encoding>
+                    <excludes>
+                        <exclude>*.png</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
 
@@ -58,13 +60,17 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.0.1</version>
                 <configuration>
+                    <outputDirectory>${basedir}/</outputDirectory>
                     <archive>
                         <manifest>
-                            <!--<addClasspath>true</addClasspath>-->
-                            <!--<classpathPrefix>lib/</classpathPrefix>-->
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
                             <mainClass>ru.dgrachev.Main</mainClass>
                         </manifest>
                     </archive>
+                    <excludes>
+                        <exclude>*.png</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <plugin>
