@@ -36,27 +36,27 @@ public class Player implements Comparable<Player>{
         this.recordTime = recordTime;
     }
 
-    public Difficult getDifficult() {
+    Difficult getDifficult() {
         return difficult;
     }
 
-    public String getPlayer() {
+    String getPlayer() {
         return player;
     }
 
-    public String getRecordTime() {
+    String getRecordTime() {
         return recordTime;
     }
 
-    public Point getBoardSize() {
+    Point getBoardSize() {
         return boardSize;
     }
 
-    public int getBombsCount() {
+    int getBombsCount() {
         return bombsCount;
     }
 
-    public String getLocalDateTime() {
+    String getLocalDateTime() {
         return localDateTime;
     }
 

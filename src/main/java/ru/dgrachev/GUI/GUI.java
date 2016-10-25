@@ -1,6 +1,7 @@
 package ru.dgrachev.GUI;
 
 import ru.dgrachev.game.Game;
+import ru.dgrachev.game.GameParameters;
 import ru.dgrachev.game.ICell;
 import ru.dgrachev.userinput.KeyGamePanelInput;
 import ru.dgrachev.userinput.MouseGamePanelInput;
@@ -31,13 +32,75 @@ public class GUI extends JFrame implements IGUI{
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
     }
+   @Override
+    public void congratulations() {
+        JLabel jl=new JLabel("Congratulations");
+        JOptionPane.showMessageDialog(this,jl,jl.getText(),JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    @Override
+    public void gameOver() {
+        JLabel jl=new JLabel("Game over.");
+        JOptionPane.showMessageDialog(this,jl,jl.getText(),JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    @Override
+    public void updateTime(String time) {
+
+        if(gameState!=null){
+            currentGameTime.setText("TIME: "+time+" hh:mm:ss");
+            gameState.repaint();
+        }
+    }
+
+    @Override
+    public void drawBoard(Map<Point, ICell> cells) {
+        gamePanel.drawBoard(cells);
+    }
+
+    @Override
+    public Dimension getPanelSize() {
+        return gamePanel.getPanelSize();
+    }
+
+    public void init(){
+        createMenuBar();
+        createGamePanel();
+        createGameState();
+        setTitle(GameParameters.GAME_NAME);
+        Toolkit t=Toolkit.getDefaultToolkit();
+        Point centerP=new Point(t.getScreenSize().width/2,t.getScreenSize().height/2);
+        setLocation(centerP.x-gamePanel.getPanelSize().width,
+                centerP.y-gamePanel.getPanelSize().height);
+        pack();
+        setResizable(false);
+        setVisible(true);
+    }
+
+
+    public void start() {
+        Game game=new Game(this);
+        MouseGamePanelInput mInput=new MouseGamePanelInput(gamePanel,game);
+        KeyGamePanelInput kInput=new KeyGamePanelInput(gamePanel,game);
+        UserGUIInput uGInput=new UserGUIInput(this,game);
+
+    }
+
+    public void addActionListener(ActionListener listener) {
+        for (int i = 0; i < gameMenuBar.getMenuCount(); i++) {
+            for (int j =0; j < gameMenuBar.getMenu(i).getItemCount(); j++) {
+                gameMenuBar.getMenu(i).getItem(j).addActionListener(listener);
+            }
+        }
+
+    }
 
     private void createGamePanel() {
         add(gamePanel,BorderLayout.CENTER);
         gamePanel.setEnabled(true);
     }
 
-    protected void createGameState() {
+    private void createGameState() {
         gameState=new JPanel();
         currentGameTime=new JLabel("TIME: "+"00:00:00"+"hh:mm:ss");
         gameState.add(currentGameTime);
@@ -46,7 +109,7 @@ public class GUI extends JFrame implements IGUI{
     }
 
 
-    protected void createMenuBar() {
+    private void createMenuBar() {
         gameMenuBar=new JMenuBar();
         JMenu gameMenu=new JMenu("MENU");
         gameMenu.add("NEW GAME");
@@ -66,67 +129,5 @@ public class GUI extends JFrame implements IGUI{
 
     }
 
-    @Override
-    public void congratulations() {
-        JLabel jl=new JLabel("Congratulations");
-        JOptionPane.showMessageDialog(this,jl,jl.getText(),JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    @Override
-    public void gameOver() {
-        JLabel jl=new JLabel("Game over.");
-        JOptionPane.showMessageDialog(this,jl,jl.getText(),JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    public void addActionListener(ActionListener listener) {
-        for (int i = 0; i < gameMenuBar.getMenuCount(); i++) {
-            for (int j =0; j < gameMenuBar.getMenu(i).getItemCount(); j++) {
-                gameMenuBar.getMenu(i).getItem(j).addActionListener(listener);
-            }
-        }
-
-    }
-
-    @Override
-    public void updateTime(String time) {
-
-        if(gameState!=null){
-            currentGameTime.setText("TIME: "+time+" hh:mm:ss");
-            gameState.repaint();
-
-        }
-    }
-
-    @Override
-    public void drawBoard(Map<Point, ICell> cells) {
-        gamePanel.drawBoard(cells);
-    }
-
-    @Override
-    public Dimension getPanelSize() {
-        return gamePanel.getPanelSize();
-    }
-
-    public void init(){
-        createMenuBar();
-        createGamePanel();
-        createGameState();
-        setLocationByPlatform(true);
-        pack();
-        setResizable(false);
-        setVisible(true);
-
-    }
-
-
-    public void begin() {
-        Game game=new Game(this);
-        MouseGamePanelInput mInput=new MouseGamePanelInput(gamePanel,game);
-        KeyGamePanelInput kInput=new KeyGamePanelInput(gamePanel,game);
-        UserGUIInput uGInput=new UserGUIInput(this,game);
-
-
-
-    }
 
 }

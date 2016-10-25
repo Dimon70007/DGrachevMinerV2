@@ -26,17 +26,17 @@ import static ru.dgrachev.game.GameParameters.MAX_RECORDS;
  */
 public class FileRecords {
 
-    public final static String RECORDS ="records.txt";
-    public final static Path FULL_STATICTICS_PATH;
+    private final static String RECORDS ="records.txt";
+    final static Path FULL_STATISTIC_PATH;
     private static BufferedWriter writer;
-    private final static File curDir;
+    private final static File CUR_DIR;
 
 //вроде как должна быть инициализация статик констант
     static {
-        curDir =new File(".");
-        FULL_STATICTICS_PATH =Paths.get(curDir.getPath(), RECORDS);
-    //Paths.get(String ... args);=>curDir="arg1/arg2/arg3/..."
-    //или можно еще curDir.resolve(RECORDS);=> curDir="curDir"+"/"+"records.txt"
+        CUR_DIR =new File(".");
+        FULL_STATISTIC_PATH =Paths.get(CUR_DIR.getPath(), RECORDS);
+    //Paths.get(String ... args);=>CUR_DIR="arg1/arg2/arg3/..."
+    //или можно еще CUR_DIR.resolve(RECORDS);=> CUR_DIR="CUR_DIR"+"/"+"records.txt"
     //при чем разделитель берется в зависимости от ОС автоматом
 
     }
@@ -48,12 +48,12 @@ public class FileRecords {
         return players;
     }
 
-    public static void write(Player player) {
+    static void write(Player player) {
 
         try{
             Set<Player> players=read();
             players.add(player);
-            writer=Files.newBufferedWriter(FULL_STATICTICS_PATH,StandardCharsets.UTF_8);
+            writer=Files.newBufferedWriter(FULL_STATISTIC_PATH,StandardCharsets.UTF_8);
             int maxRecords=MAX_RECORDS;
             for (Player p:players) {
                 if (maxRecords==0)
@@ -74,10 +74,9 @@ public class FileRecords {
 
     }
 
-    public static void parsePlayers(NavigableSet<Player> players) {
+    private static void parsePlayers(final NavigableSet<Player> players) {
         try {
-
-            List<String> lines= Files.readAllLines(FULL_STATICTICS_PATH, StandardCharsets.UTF_8);
+            List<String> lines= Files.readAllLines(FULL_STATISTIC_PATH, StandardCharsets.UTF_8);
             //парсим строку берем все что между - и , или между - и концом строки
             Pattern pt = Pattern.compile("-.+?(,|$)");
                 Matcher mt;
@@ -92,7 +91,7 @@ public class FileRecords {
             }
         } catch (IOException e) {
             try {
-                writer=Files.newBufferedWriter(FULL_STATICTICS_PATH, StandardCharsets.UTF_8);
+                writer=Files.newBufferedWriter(FULL_STATISTIC_PATH, StandardCharsets.UTF_8);
             } catch (IOException e1) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
             }finally {
@@ -106,7 +105,7 @@ public class FileRecords {
         }
     }
 
-    public static Player parsePlayer(String s) {
+    static Player parsePlayer(String s) {
 
         String params=s.replaceAll("-","");//убираем минус
         String[] modParams=params.split(",");//нарезаем по запятой
@@ -127,21 +126,21 @@ public class FileRecords {
 //    public static Path getApplicationStartUp() {
 //        URL startupUrl = FileRecords.class.getProtectionDomain().getCodeSource()
 //                .getLocation();
-//        Path curDir = null;
+//        Path CUR_DIR = null;
 //        try {
-//            curDir = Paths.get(startupUrl.toURI());
+//            CUR_DIR = Paths.get(startupUrl.toURI());
 //        } catch (FileSystemNotFoundException e) {
 //            try {
-//                curDir = Paths.get(new URL(startupUrl.getPath()).getPath());
+//                CUR_DIR = Paths.get(new URL(startupUrl.getPath()).getPath());
 //            } catch (Exception ipe) {
-//                curDir = Paths.get(startupUrl.getPath());
+//                CUR_DIR = Paths.get(startupUrl.getPath());
 //            }
 //        } catch (IllegalArgumentException | SecurityException | URISyntaxException e) {
 //            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
 //        }
-//        if (curDir!=null)
-//            curDir = curDir.getParent();
-//        return curDir;
+//        if (CUR_DIR!=null)
+//            CUR_DIR = CUR_DIR.getParent();
+//        return CUR_DIR;
 //    }
 
 }

@@ -9,7 +9,7 @@ import java.util.Map;
  * Created by OTBA}|{HbIu` on 12.10.16.
  */
 public class Board implements IBoard{
-    Map<Point,ICellState> boardCellsState;
+    private final Map<Point,ICellState> boardCellsState;
 
 
     public Board() {
@@ -22,12 +22,13 @@ public class Board implements IBoard{
     }
 
     @Override
-    public ICellState getCellState(Point point) {
+    public ICellState getCellState(final Point point) {
         return boardCellsState.get(point);
     }
 
 
-    ICellState setCellState(Point point, ICellState cellState) {
+    //this method has been set package private for generating mines
+    ICellState setCellState(final Point point, final ICellState cellState) {
         return boardCellsState.put(point,cellState);
     }
 

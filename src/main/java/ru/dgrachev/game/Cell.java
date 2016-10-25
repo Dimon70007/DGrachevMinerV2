@@ -15,7 +15,7 @@ public enum Cell implements ICell {
 
     private final static ICell[] CELLS=Cell.class.getEnumConstants();
 
-    private String value;
+    private final String value;
     private BufferedImage image;
 
     Cell(String s) {

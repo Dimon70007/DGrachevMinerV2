@@ -48,7 +48,7 @@ public class GamePanel extends JPanel implements IGamePanel {
     @Override
     public Dimension getPreferredSize() {
         //установили правильный размер
-        return new Dimension(width,height);
+        return getPanelSize();
     }
 
     @Override
@@ -67,15 +67,13 @@ public class GamePanel extends JPanel implements IGamePanel {
                 p = entry.getKey();
                 try {
                     image = entry.getValue().getImage();
+                    //drawing the matrix of cells with size==CELLSIZE
                     g.drawImage(image, p.x * CELL_SIZE, p.y * CELL_SIZE, CELL_SIZE, CELL_SIZE, null);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
-//        Graphics2D g2=(Graphics2D)g;
-//        Rectangle2D rect=new Rectangle2D.Double(400,400,200,150);
-//
     }
 
 }

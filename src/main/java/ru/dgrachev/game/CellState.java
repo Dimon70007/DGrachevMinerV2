@@ -6,9 +6,9 @@ package ru.dgrachev.game;
 public class CellState implements ICellState {
     private boolean isOpen;
     private int flag;
-    private ICell cell;
+    private final ICell cell;
 
-    public CellState(ICell cell) {
+    public CellState(final ICell cell) {
         this.cell = cell;
         this.isOpen = false;
         this.flag = 0;

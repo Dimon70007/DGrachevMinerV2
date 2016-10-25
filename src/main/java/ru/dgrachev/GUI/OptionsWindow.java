@@ -33,82 +33,13 @@ public class OptionsWindow extends JDialog implements ActionListener,ItemListene
     public OptionsWindow(GUI gui) {
         super(gui,"OPTIONS",true);
         this.gui=gui;
-        setBounds(gui.getBounds().x+SHIFT_OPT_WINDOW,
-                gui.getBounds().y+SHIFT_OPT_WINDOW,
-                optSize.width,
-                optSize.height);
-        setPreferredSize(optSize);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setResizable(false);
-        setLayout(new BorderLayout());
-        radioButtonPanel=new JPanel(new FlowLayout(FlowLayout.CENTER));
-        rButtonGroup =new ButtonGroup();
-        addRadioButton(easy=new JRadioButton(), Difficult.EASY.toString());
-        addRadioButton(medium=new JRadioButton(),Difficult.MEDIUM.toString());
-        addRadioButton(hard=new JRadioButton(),Difficult.HARD.toString());
-        addRadioButton(custom=new JRadioButton(),Difficult.CUSTOM.toString());
-        createBorderOnPanel(radioButtonPanel,BorderFactory.createEtchedBorder(),"CHOICE THE DIFFICULT");
-        add(radioButtonPanel,BorderLayout.NORTH);
-
-        customPanel=new JPanel(new FlowLayout());
-        createCustomFields(x=new JTextField("CUSTOM CELLS COUNT ON X"),""+GameParameters.currentBoardSize.x,3);
-        createCustomFields(y=new JTextField("CUSTOM CELLS COUNT ON Y"), ""+GameParameters.currentBoardSize.y, 3);
-        createCustomFields(bombsCount=new JTextField("CUSTOM BOMBS COUNT"),""+GameParameters.currentBombsCount, 5);
-        createCustomFields(playerName=new JTextField("PLAYER NAME"), GameParameters.playerName, 15);
-        createBorderOnPanel(customPanel,BorderFactory.createEtchedBorder(),"SET CUSTOM PARAMETERS");
-        customPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        x.setEnabled(false);
-        y.setEnabled(false);
-        bombsCount.setEnabled(false);
-        add(customPanel,BorderLayout.CENTER);
-
-        okCancelButtonPanel=new JPanel(new FlowLayout());
-        createButtons(oK=new JButton("OK"));
-        createButtons(cancel=new JButton("CANCEL"));
-        add(okCancelButtonPanel,BorderLayout.AFTER_LAST_LINE);
-//        addActionListener(this);
-        pack();
-        setVisible(true);
+        init();
+        createRadioButtonPanel();
+        createCustomPanel();
+        createOkCancelPanel();
+        start();
     }
 
-    private void createBorderOnPanel(JPanel panel, Border border, String title) {
-        if(title!=null)
-            panel.setBorder(BorderFactory.createTitledBorder(border,title));
-        else
-            panel.setBorder(border);
-    }
-
-    private void createButtons(JButton button) {
-        button.setActionCommand(button.getText());
-        button.addActionListener(this);
-        okCancelButtonPanel.add(button);
-    }
-
-
-
-    private void createCustomFields(JTextField textField, String fieldValue, int columnsCount) {
-
-        JLabel label=new JLabel(textField.getText());
-        textField.setText(fieldValue);
-        textField.setColumns(columnsCount);
-        customPanel.add(label);
-        customPanel.add(textField);
-
-    }
-
-    private void addRadioButton(JRadioButton rButton, String rButtonName) {
-        boolean selected=rButtonName.equalsIgnoreCase(GameParameters.currentDifficult.toString());
-        rButton.setText(rButtonName);
-        rButton.setSelected(selected);
-        rButton.setActionCommand(rButtonName);
-        rButton.addItemListener(this);
-        rButtonGroup.add(rButton);
-        radioButtonPanel.add(rButton);
-    }
-
-    public String getSelection(){
-        return rButtonGroup.getSelection().getActionCommand();
-    }
 
 //    public void addActionListener(ActionListener listener) {
 //        oK.addActionListener(listener);
@@ -119,13 +50,11 @@ public class OptionsWindow extends JDialog implements ActionListener,ItemListene
 ////        bombsCount.addActionListener(listener);
 //    }
 
-
     @Override
     public void actionPerformed(ActionEvent e) {
 
-
         if(e.getSource() instanceof JButton) {
-        String buttonName=((JButton)e.getSource()).getText();
+            String buttonName=((JButton)e.getSource()).getText();
             if (("OK").equalsIgnoreCase(buttonName)) {
                 boolean isCustomCorrect=true;
                 boolean isNameCorrect=true;
@@ -205,13 +134,7 @@ public class OptionsWindow extends JDialog implements ActionListener,ItemListene
                 this.dispose();
                 gui.repaint();
             }
-
         }
-
-
-
-
-
     }
 
     @Override
@@ -228,4 +151,95 @@ public class OptionsWindow extends JDialog implements ActionListener,ItemListene
             }
         }
     }
+
+
+    private String getSelection(){
+        return rButtonGroup.getSelection().getActionCommand();
+    }
+
+    private void start() {
+        //        addActionListener(this);
+        pack();
+        setVisible(true);
+    }
+
+    private void createOkCancelPanel() {
+        okCancelButtonPanel=new JPanel(new FlowLayout());
+        createButtons(oK=new JButton("OK"));
+        createButtons(cancel=new JButton("CANCEL"));
+        add(okCancelButtonPanel,BorderLayout.AFTER_LAST_LINE);
+    }
+
+    private void createCustomPanel() {
+        customPanel=new JPanel(new FlowLayout());
+        createCustomFields(x=new JTextField("CUSTOM CELLS COUNT ON X"),""+GameParameters.currentBoardSize.x,3);
+        createCustomFields(y=new JTextField("CUSTOM CELLS COUNT ON Y"), ""+GameParameters.currentBoardSize.y, 3);
+        createCustomFields(bombsCount=new JTextField("CUSTOM BOMBS COUNT"),""+GameParameters.currentBombsCount, 5);
+        createCustomFields(playerName=new JTextField("PLAYER NAME"), GameParameters.playerName, 15);
+        createBorderOnPanel(customPanel,BorderFactory.createEtchedBorder(),"SET CUSTOM PARAMETERS");
+        customPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        x.setEnabled(false);
+        y.setEnabled(false);
+        bombsCount.setEnabled(false);
+        add(customPanel,BorderLayout.CENTER);
+    }
+
+    private void createRadioButtonPanel() {
+        radioButtonPanel=new JPanel(new FlowLayout(FlowLayout.CENTER));
+        rButtonGroup =new ButtonGroup();
+        addRadioButton(easy=new JRadioButton(), Difficult.EASY.toString());
+        addRadioButton(medium=new JRadioButton(),Difficult.MEDIUM.toString());
+        addRadioButton(hard=new JRadioButton(),Difficult.HARD.toString());
+        addRadioButton(custom=new JRadioButton(),Difficult.CUSTOM.toString());
+        createBorderOnPanel(radioButtonPanel,BorderFactory.createEtchedBorder(),"CHOICE THE DIFFICULT");
+        add(radioButtonPanel,BorderLayout.NORTH);
+
+    }
+
+    private void init() {
+        setBounds(gui.getBounds().x+SHIFT_OPT_WINDOW,
+                gui.getBounds().y+SHIFT_OPT_WINDOW,
+                optSize.width,
+                optSize.height);
+        setPreferredSize(optSize);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setResizable(false);
+        setLayout(new BorderLayout());
+    }
+
+    private void createBorderOnPanel(JPanel panel, Border border, String title) {
+        if(title!=null)
+            panel.setBorder(BorderFactory.createTitledBorder(border,title));
+        else
+            panel.setBorder(border);
+    }
+
+    private void createButtons(JButton button) {
+        button.setActionCommand(button.getText());
+        button.addActionListener(this);
+        okCancelButtonPanel.add(button);
+    }
+
+
+
+    private void createCustomFields(JTextField textField, String fieldValue, int columnsCount) {
+
+        JLabel label=new JLabel(textField.getText());
+        textField.setText(fieldValue);
+        textField.setColumns(columnsCount);
+        customPanel.add(label);
+        customPanel.add(textField);
+
+    }
+
+    private void addRadioButton(JRadioButton rButton, String rButtonName) {
+        boolean selected=rButtonName.equalsIgnoreCase(GameParameters.currentDifficult.toString());
+        rButton.setText(rButtonName);
+        rButton.setSelected(selected);
+        rButton.setActionCommand(rButtonName);
+        rButton.addItemListener(this);
+        rButtonGroup.add(rButton);
+        radioButtonPanel.add(rButton);
+    }
+
 }

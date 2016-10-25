@@ -29,7 +29,7 @@ public class Game implements IGame {
 
     private boolean firstUserPoint=true;
     private boolean gameOver=false;
-    private Thread t;
+    private Thread threadThatUpdateGameTime;
 
     public Game(Board board, IGUI gui, IGenerate generator) {
         this.board = board;
@@ -52,25 +52,10 @@ public class Game implements IGame {
     public void openCell(Point point) {
         if (gameOver)
             return;
-        if(firstUserPoint){
-            generator.generateMines(board,point);
-            firstUserPoint=false;
-            beginTime=System.currentTimeMillis();
-             t=new Thread(new Runnable(){
-                public void run(){
-                    while (!gameOver){
-                        updateGameTime();
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-            t.start();
 
-        }
+        if(firstUserPoint)
+            startGame(point);
+
         ICellState cellState=board.getCellState(point);
         try {
             checkLoose(cellState);
@@ -78,31 +63,29 @@ public class Game implements IGame {
             gameOver=true;
             gui.drawBoard(resultBoardWithChangedBombs(OPEN_BOMB_AS_EXPLOSION));
             gui.gameOver();
-            joinT();
+            joinThreadThatUpdateGameTime();
             return;
         }
+        //change board's state
         openCellsOnBoard(point);
+
             try {
                 checkWin();
             }catch (WinException e) {
                 gameOver=true;
+                saveCurrentGameTime();
                 gui.drawBoard(resultBoardWithChangedBombs(OPEN_BOMB_AS_BOMB));
                 gui.congratulations();
-                saveCurrentGameTime();
-                joinT();
+                joinThreadThatUpdateGameTime();
                 return;
         }
+
+        //simple draw board with it's current state
         gui.drawBoard(resultBoardWithChangedBombs(DONT_NEED_OPEN_BOMB));
-
     }
 
-    private void joinT() {
-        try {
-            t.join();
-        } catch (InterruptedException e1) {
-            e1.printStackTrace();
-        }
-    }
+
+
 
     @Override
     public void checkLoose(ICellState cellState) throws LooseException {
@@ -123,10 +106,8 @@ public class Game implements IGame {
         throw new WinException();
     }
 
-
     @Override
-    public void setFlag(Point point)
-    {
+    public void setFlag(Point point) {
         if (gameOver)
             return;
         board.getCellState(point).setFlag();
@@ -141,6 +122,85 @@ public class Game implements IGame {
         gui.updateTime(locGameTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
     }
 
+    //this method has been set package private for testing
+    void openCellsOnBoard(Point point) {
+        ICellState cs=board.getCellState(point);
+        cs.setOpened();
+        if (cs.getCell()!=Cell.EMPTY)
+            return;//если ячейка не пустая -открываем только ее
+
+        Point p;
+        int exit;
+        while (true) {
+            exit=0;
+            for (HashMap.Entry<Point, ICellState> entry : board) {
+                p = entry.getKey();
+                cs=entry.getValue();
+                if (cs.getCell()==Cell.EMPTY && cs.isOpen())
+                    exit+=goAroundCell(p, true);
+            }
+            if(exit==0)
+                break;//тут мы получим на поле после 2 хода игрока
+            // часть открытых ячеек - пустые а часть - с цифрами
+        }
+
+        for (Map.Entry<Point, ICellState> entry : board) {
+            p = entry.getKey();
+            cs = entry.getValue();
+            //open closed cells around empty opened cell
+            if (cs.getCell() == Cell.EMPTY && cs.isOpen())
+                goAroundCell(p, false);
+        }
+
+    }
+
+    private Map<Point, ICell> resultBoardWithChangedBombs(int flag) {
+        ICellState cs;
+        Point p;
+        Map<Point, ICell> result=new HashMap<>();
+        for(Map.Entry<Point,ICellState> entry:board){
+            cs=entry.getValue();
+            p=entry.getKey();
+            if(!cs.isOpen()) {
+                if (cs.getFlag() != Cell.CLOSED) {
+                    result.put(p, cs.getFlag());
+                } else {
+                    result.put(p, Cell.CLOSED);
+                }
+            }else {
+                result.put(p, cs.getCell());
+            }
+            if (flag==OPEN_BOMB_AS_BOMB) {
+                if (cs.getCell()==BOMB_TYPE)
+                    result.put(p, BOMB_TYPE);
+                continue;
+            }
+            if (flag==OPEN_BOMB_AS_EXPLOSION) {
+                if (cs.getCell()==BOMB_TYPE)
+                    result.put(p, Cell.EXPLOSION);
+            }
+        }
+        return result;
+    }
+
+    private void startGame(Point point) {
+        generator.generateMines(board,point);
+        firstUserPoint=false;
+        threadThatUpdateGameTime =new Thread(new Runnable(){
+            public void run(){
+                while (!gameOver){
+                    updateGameTime();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        threadThatUpdateGameTime.start();
+        beginTime=System.currentTimeMillis();
+    }
     private void saveCurrentGameTime(){
         //посчитал что время дешевле всего хранить в милисекундах а не в объекте
         //тем более что вызов этого метода происходит 1 раз за игру
@@ -155,40 +215,12 @@ public class Game implements IGame {
             }
         }).start();
     }
-
-    public void openCellsOnBoard(Point point) {
-        ICellState cs=board.getCellState(point);
-        cs.setOpened();
-        if (cs.getCell()!=Cell.EMPTY)
-            return;//если ячейка не пустая -открываем только ее
-
-        Point p;
-//        HashMap<Point,ICellState> cellsInOpenState=new HashMap<>();
-//        cellsInOpenState.put(point,cs);
-//        Map<Point,ICellState> tmp=new HashMap<>();
-        int exit;
-        while (true) {
-            exit=0;
-            for (HashMap.Entry<Point, ICellState> entry : board) {
-                p = entry.getKey();
-                cs=entry.getValue();
-                if (cs.getCell()==Cell.EMPTY && cs.isOpen())
-                    exit+=goAroundCell(p, true);
-            }
-            if(exit==0)
-                break;//тут мы получим на поле после 2 хода игрока часть открытых ячеек пустые а часть с цифрами
-//            cellsInOpenState.putAll(tmp);
-//            tmp=new HashMap<>();
+    private void joinThreadThatUpdateGameTime() {
+        try {
+            threadThatUpdateGameTime.join();
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
         }
-
-        for (Map.Entry<Point, ICellState> entry : board) {
-            p = entry.getKey();
-            cs = entry.getValue();
-            //open closed cell around empty opened cell
-            if (cs.getCell() == Cell.EMPTY && cs.isOpen())
-                goAroundCell(p, false);
-        }
-
     }
 
     private int goAroundCell(Point point, boolean isGoToEmpty) {
@@ -213,37 +245,6 @@ public class Game implements IGame {
                 }else {
                     cs.setOpened();//тут мы открываем все закрытые ячейки в радиусе 1 от текущей
                 }
-            }
-        }
-        return result;
-    }
-
-    public Map<Point, ICell> resultBoardWithChangedBombs(int flag) {
-        ICellState cs;
-        Point p;
-        Map<Point, ICell> result=new HashMap<>();
-        for(Map.Entry<Point,ICellState> entry:board){
-            cs=entry.getValue();
-            p=entry.getKey();
-            //если мы указали что нужно заменить бомбу на что-то другое (на взрыв например)
-            //то в этом if() бомба заменяется на targetCell
-            if(!cs.isOpen()) {
-                if (cs.getFlag() != Cell.CLOSED) {
-                    result.put(p, cs.getFlag());
-                } else {
-                    result.put(p, Cell.CLOSED);
-                }
-            }else {
-                result.put(p, cs.getCell());
-            }
-            if (flag==OPEN_BOMB_AS_BOMB) {
-                if (cs.getCell()==BOMB_TYPE)
-                    result.put(p, BOMB_TYPE);
-                continue;
-            }
-            if (flag==OPEN_BOMB_AS_EXPLOSION) {
-                if (cs.getCell()==BOMB_TYPE)
-                    result.put(p, Cell.EXPLOSION);
             }
         }
         return result;
