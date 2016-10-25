@@ -64,42 +64,39 @@ public class OptionsWindow extends JDialog implements ActionListener,ItemListene
                 int tmpBCount = Integer.valueOf(this.bombsCount.getText().trim());
                 String pName=GameParameters.playerName;
 
-                if ("EASY".equalsIgnoreCase(
+                if (Difficult.EASY.toString().equalsIgnoreCase(
                         this.getSelection())) {
                     GameParameters.currentDifficult = Difficult.EASY;
+                    GameParameters.currentBoardSize = GameParameters.EASY_BOARD_SIZE;
                     GameParameters.currentBombsCount = GameParameters.EASY_BOMB_COUNT;
-                    GameParameters.currentBoardSize.x = GameParameters.EASY_BOARD_SIZE.x;
-                    GameParameters.currentBoardSize.y = GameParameters.EASY_BOARD_SIZE.y;
 
                 }
 
-                if ("MEDIUM".equalsIgnoreCase(
+                if (Difficult.MEDIUM.toString().equalsIgnoreCase(
                         this.getSelection())) {
                     GameParameters.currentDifficult = Difficult.MEDIUM;
+                    GameParameters.currentBoardSize = GameParameters.MEDIUM_BOARD_SIZE;
                     GameParameters.currentBombsCount = GameParameters.MEDIUM_BOMB_COUNT;
-                    GameParameters.currentBoardSize.x = GameParameters.MEDIUM_BOARD_SIZE.x;
-                    GameParameters.currentBoardSize.y = GameParameters.MEDIUM_BOARD_SIZE.y;
 
                 }
 
-                if ("HARD".equalsIgnoreCase(
+                if (Difficult.HARD.toString().equalsIgnoreCase(
                         this.getSelection())) {
                     GameParameters.currentDifficult = Difficult.HARD;
+                    GameParameters.currentBoardSize = GameParameters.HARD_BOARD_SIZE;
                     GameParameters.currentBombsCount = GameParameters.HARD_BOMB_COUNT;
-                    GameParameters.currentBoardSize.x = GameParameters.HARD_BOARD_SIZE.x;
-                    GameParameters.currentBoardSize.y = GameParameters.HARD_BOARD_SIZE.y;
 
                 }
 
-                if ("CUSTOM".equalsIgnoreCase(
+                if (Difficult.CUSTOM.toString().equalsIgnoreCase(
                         this.getSelection())) {
                     if (tmpX > 4 &&
                             tmpY > 4 &&
                             tmpBCount > 0 && tmpBCount < (tmpX * tmpY)) {
                         GameParameters.currentDifficult = Difficult.CUSTOM;
-                        GameParameters.currentBombsCount = tmpBCount;
                         GameParameters.currentBoardSize.x = tmpX;
                         GameParameters.currentBoardSize.y = tmpY;
+                        GameParameters.currentBombsCount = tmpBCount;
 
                         isCustomCorrect=true;
                     } else if (tmpX <= 0 || tmpY <= 0 || tmpBCount <= 0) {
@@ -113,8 +110,6 @@ public class OptionsWindow extends JDialog implements ActionListener,ItemListene
                                 message,
                                 "Wrong Parameters", JOptionPane.WARNING_MESSAGE);
                     }
-
-
                 }
                 if (this.playerName.getText().trim().length()==0){
                     isNameCorrect=false;
@@ -176,11 +171,9 @@ public class OptionsWindow extends JDialog implements ActionListener,ItemListene
         createCustomFields(y=new JTextField("CUSTOM CELLS COUNT ON Y"), ""+GameParameters.currentBoardSize.y, 3);
         createCustomFields(bombsCount=new JTextField("CUSTOM BOMBS COUNT"),""+GameParameters.currentBombsCount, 5);
         createCustomFields(playerName=new JTextField("PLAYER NAME"), GameParameters.playerName, 15);
+        playerName.setEnabled(true);
         createBorderOnPanel(customPanel,BorderFactory.createEtchedBorder(),"SET CUSTOM PARAMETERS");
         customPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        x.setEnabled(false);
-        y.setEnabled(false);
-        bombsCount.setEnabled(false);
         add(customPanel,BorderLayout.CENTER);
     }
 
@@ -227,6 +220,7 @@ public class OptionsWindow extends JDialog implements ActionListener,ItemListene
         JLabel label=new JLabel(textField.getText());
         textField.setText(fieldValue);
         textField.setColumns(columnsCount);
+        textField.setEnabled(custom.isSelected());
         customPanel.add(label);
         customPanel.add(textField);
 

@@ -82,7 +82,6 @@ public class Game implements IGame {
                 joinThreadThatUpdateGameTime();
                 return;
         }
-
         //simple draw board with it's current state
         gui.drawBoard(resultBoardWithChangedBombs(DONT_NEED_OPEN_BOMB));
     }
