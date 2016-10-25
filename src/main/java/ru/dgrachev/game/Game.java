@@ -57,6 +57,9 @@ public class Game implements IGame {
             startGame(point);
 
         ICellState cellState=board.getCellState(point);
+        if (cellState.getFlag()==Cell.FLAG)
+            return;
+
         try {
             checkLoose(cellState);
         } catch (LooseException e) {
