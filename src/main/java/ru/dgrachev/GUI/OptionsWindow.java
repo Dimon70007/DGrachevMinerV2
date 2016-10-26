@@ -96,8 +96,8 @@ public class OptionsWindow extends JDialog implements ActionListener,ItemListene
                         this.getSelection())) {
                     Dimension screenSize=gui.getToolkit().getScreenSize();
                     try {
-                        GameParameters.currentBoardSize.x=handleInput(tmpX,screenSize.width/CELL_SIZE,"CUSTOM CELLS ON X ");
-                        GameParameters.currentBoardSize.y=handleInput(tmpY,screenSize.height/CELL_SIZE,"CUSTOM CELLS ON Y ");
+                        GameParameters.currentBoardSize.x=handleInput(tmpX,screenSize.width/CELL_SIZE-3,"CUSTOM CELLS ON X ");
+                        GameParameters.currentBoardSize.y=handleInput(tmpY,screenSize.height/CELL_SIZE-3,"CUSTOM CELLS ON Y ");
                         GameParameters.currentBombsCount=handleInput(tmpBCount,tmpX*tmpY,"CUSTOM BOMBS COUNT ");
                         isCustomCorrect=true;
                         GameParameters.currentDifficult = Difficult.CUSTOM;
