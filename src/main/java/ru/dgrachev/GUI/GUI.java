@@ -70,8 +70,9 @@ public class GUI extends JFrame implements IGUI{
         setTitle(GameParameters.GAME_NAME);
         Toolkit t=Toolkit.getDefaultToolkit();
         Point centerP=new Point(t.getScreenSize().width/2,t.getScreenSize().height/2);
-        setLocation(centerP.x-gamePanel.getPanelSize().width,
-                centerP.y-gamePanel.getPanelSize().height);
+        int locationX=centerP.x-gamePanel.getPanelSize().width/2;
+        int locationY=centerP.y-gamePanel.getPanelSize().height/2;
+        setLocation(locationX>0?locationX:10,locationY>0?locationY:10);
         pack();
         setResizable(false);
         setVisible(true);

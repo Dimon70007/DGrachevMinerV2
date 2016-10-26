@@ -3,6 +3,7 @@ package ru.dgrachev.GUI;
 //import com.sun.java.swing.ui.OkCancelButtonPanel;
 import ru.dgrachev.Main;
 import ru.dgrachev.game.Difficult;
+import ru.dgrachev.game.Exceptions.WrongGameParameterException;
 import ru.dgrachev.game.GameParameters;
 
 import javax.swing.*;
@@ -12,6 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+
+import static ru.dgrachev.game.GameParameters.CELL_SIZE;
 
 /**
  * Created by OTBA}|{HbIu` on 12.10.16.
@@ -55,6 +58,7 @@ public class OptionsWindow extends JDialog implements ActionListener,ItemListene
 
         if(e.getSource() instanceof JButton) {
             String buttonName=((JButton)e.getSource()).getText();
+
             if (("OK").equalsIgnoreCase(buttonName)) {
                 boolean isCustomCorrect=true;
                 boolean isNameCorrect=true;
@@ -62,7 +66,7 @@ public class OptionsWindow extends JDialog implements ActionListener,ItemListene
                 int tmpX = Integer.valueOf(this.x.getText().trim());
                 int tmpY = Integer.valueOf(this.y.getText().trim());
                 int tmpBCount = Integer.valueOf(this.bombsCount.getText().trim());
-                String pName=GameParameters.playerName;
+                String pName="";
 
                 if (Difficult.EASY.toString().equalsIgnoreCase(
                         this.getSelection())) {
@@ -90,30 +94,21 @@ public class OptionsWindow extends JDialog implements ActionListener,ItemListene
 
                 if (Difficult.CUSTOM.toString().equalsIgnoreCase(
                         this.getSelection())) {
-                    if (tmpX > 4 &&
-                            tmpY > 4 &&
-                            tmpBCount > 0 && tmpBCount < (tmpX * tmpY)) {
-                        GameParameters.currentDifficult = Difficult.CUSTOM;
-                        GameParameters.currentBoardSize.x = tmpX;
-                        GameParameters.currentBoardSize.y = tmpY;
-                        GameParameters.currentBombsCount = tmpBCount;
-
+                    Dimension screenSize=gui.getToolkit().getScreenSize();
+                    try {
+                        GameParameters.currentBoardSize.x=handleInput(tmpX,screenSize.width/CELL_SIZE,"CUSTOM CELLS ON X ");
+                        GameParameters.currentBoardSize.y=handleInput(tmpY,screenSize.height/CELL_SIZE,"CUSTOM CELLS ON Y ");
+                        GameParameters.currentBombsCount=handleInput(tmpBCount,tmpX*tmpY,"CUSTOM BOMBS COUNT ");
                         isCustomCorrect=true;
-                    } else if (tmpX <= 0 || tmpY <= 0 || tmpBCount <= 0) {
+                        GameParameters.currentDifficult = Difficult.CUSTOM;
+                    }catch (WrongGameParameterException ex){
                         isCustomCorrect=false;
-                        String message="You have been chose CUSTOM currentDifficult,\n" +
-                                "that's why you should enter CELLS COUNTS\n" +
-                                "bigger then 4x4 and CUSTOM BOMBS COUNT= \n" +
-                                "bigger then zero and less then multiple\n" +
-                                "of (CELLS COUNT on X and CELLS COUNT ON Y)";
-                        JOptionPane.showMessageDialog(this,
-                                message,
-                                "Wrong Parameters", JOptionPane.WARNING_MESSAGE);
                     }
                 }
+
                 if (this.playerName.getText().trim().length()==0){
                     isNameCorrect=false;
-                    JOptionPane.showMessageDialog(this,"Please enter player's name","Empty player name",JOptionPane.WARNING_MESSAGE);
+                    showWarningMessage("Please enter player's name");
                 }else {
                     pName=this.playerName.getText().trim();
                     isNameCorrect=true;
@@ -132,6 +127,8 @@ public class OptionsWindow extends JDialog implements ActionListener,ItemListene
         }
     }
 
+
+
     @Override
     public void itemStateChanged(ItemEvent e) {
         if(e.getSource() instanceof JRadioButton) {
@@ -146,7 +143,20 @@ public class OptionsWindow extends JDialog implements ActionListener,ItemListene
             }
         }
     }
+    private int handleInput(int input, int parameter, String s) throws WrongGameParameterException {
+        if (input>=2 && input<parameter) {
+            return input;
+        }else {
+            showWarningMessage(String.format(s + "MUST BE IN 2 - %d", parameter-1));
+            throw new WrongGameParameterException();
+        }
+    }
 
+    private void showWarningMessage(String message){
+        JOptionPane.showMessageDialog(this,
+                message,
+                "Wrong Parameters", JOptionPane.WARNING_MESSAGE);
+    }
 
     private String getSelection(){
         return rButtonGroup.getSelection().getActionCommand();
