@@ -8,7 +8,6 @@
     <artifactId>DGrachevMinerV2</artifactId>
     <packaging>jar</packaging>
     <version>1.0.1-SNAPSHOT</version>
-
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -21,24 +20,14 @@
     <build>
         <resources>
             <resource>
-                <directory>${basedir}/src/res/</directory>
+                <directory>${basedir}/src/res</directory>
                 <includes>
-                    <include>**/*.properties</include>
-                    <include>**/*.txt</include>
+                    <!--<include>**/*.properties</include>-->
+                    <!--<include>**/*.txt</include>-->
                     <include>**/*.png</include>
                 </includes>
             </resource>
         </resources>
-        <testResources>
-            <testResource>
-                <directory>${basedir}/src/res/</directory>
-                <includes>
-                    <include>**/*.properties</include>
-                    <include>**/*.txt</include>
-                    <include>**/*.png</include>
-                </includes>
-            </testResource>
-        </testResources>
         <plugins>
 
             <plugin>
@@ -49,9 +38,6 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <encoding>UTF-8</encoding>
-                    <excludes>
-                        <exclude>*.png</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
 
@@ -60,45 +46,15 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.0.1</version>
                 <configuration>
-                    <outputDirectory>${basedir}/</outputDirectory>
+                    <outputDirectory>${basedir}</outputDirectory>
                     <archive>
                         <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
+                            <!--<addClasspath>true</addClasspath>-->
+                            <!--<classpathPrefix>lib/</classpathPrefix>-->
                             <mainClass>ru.dgrachev.Main</mainClass>
                         </manifest>
                     </archive>
-                    <excludes>
-                        <exclude>*.png</exclude>
-                    </excludes>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.0.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <!-- here the phase you need -->
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.outputDirectory}/src/res</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}/src/res</directory>
-                                    <filtering>false</filtering>
-                                    <includes>
-                                        <include>**/*.png</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

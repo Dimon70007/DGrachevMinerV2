@@ -21,7 +21,7 @@ public enum Cell implements ICell {
     Cell(String s) {
         this.value=s;
         try {
-            this.image = ImageIO.read(getClass().getClassLoader().getResourceAsStream("src/res/"+value + ".png"));
+            this.image = ImageIO.read(getClass().getClassLoader().getResourceAsStream("images/"+value + ".png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
