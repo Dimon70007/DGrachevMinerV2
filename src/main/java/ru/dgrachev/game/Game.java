@@ -23,9 +23,9 @@ public class Game implements IGame {
     private long beginTime;
     private long currentGameTime;
 //    private SimpleDateFormat simpleDateFormat=new SimpleDateFormat("hh:mm:ss");
-    private final static int DONT_NEED_OPEN_BOMB=0;
+//    private final static int NOT_OPEN_BOMB =0;
     private final static int OPEN_BOMB_AS_EXPLOSION=1;
-    private final static int OPEN_BOMB_AS_BOMB=2;
+    private final static int JUST_OPEN_BOMB =2;
 
     private boolean firstUserPoint=true;
     private boolean gameOver=false;
@@ -35,18 +35,18 @@ public class Game implements IGame {
         this.board = board;
         this.generator=generator;
         this.gui=gui;
-        generator.generateBoard(board);
-        gui.drawBoard(resultBoardWithChangedBombs(DONT_NEED_OPEN_BOMB));
+        generator.generateBoard();
+        gui.drawBoard();
         gui.updateTime("00:00:00");
     }
 
     public Game(Board board,IGUI gui) {
-        this(board,gui,new Generator(BOMB_TYPE));
+        this(board,gui,new Generator(BOMB_TYPE, board));
     }
 
-    public Game(IGUI gui) {
-        this(new Board(),gui);
-    }
+//    public Game(IGUI gui) {
+//        this(new Board(),gui);
+//    }
 
     @Override
     public void openCell(Point point) {
@@ -64,7 +64,8 @@ public class Game implements IGame {
             checkLoose(cellState);
         } catch (LooseException e) {
             gameOver=true;
-            gui.drawBoard(resultBoardWithChangedBombs(OPEN_BOMB_AS_EXPLOSION));
+            changeBoardStateOnGameOver(OPEN_BOMB_AS_EXPLOSION);
+            gui.drawBoard();
             gui.gameOver();
             joinThreadThatUpdateGameTime();
             return;
@@ -77,13 +78,15 @@ public class Game implements IGame {
             }catch (WinException e) {
                 gameOver=true;
                 saveCurrentGameTime();
-                gui.drawBoard(resultBoardWithChangedBombs(OPEN_BOMB_AS_BOMB));
+                changeBoardStateOnGameOver(JUST_OPEN_BOMB);
+                gui.drawBoard();
                 gui.congratulations();
                 joinThreadThatUpdateGameTime();
                 return;
         }
         //simple draw board with it's current state
-        gui.drawBoard(resultBoardWithChangedBombs(DONT_NEED_OPEN_BOMB));
+//        changeBoardStateOnGameOver(NOT_OPEN_BOMB);
+        gui.drawBoard();
     }
 
 
@@ -113,7 +116,7 @@ public class Game implements IGame {
         if (gameOver)
             return;
         board.getCellState(point).setFlag();
-        gui.drawBoard(resultBoardWithChangedBombs(DONT_NEED_OPEN_BOMB));
+        gui.drawBoard();
     }
 
     @Override
@@ -156,65 +159,45 @@ public class Game implements IGame {
 
     }
 
-    private Map<Point, ICell> resultBoardWithChangedBombs(int flag) {
+    private void changeBoardStateOnGameOver(int flag) {
         ICellState cs;
         Point p;
-        Map<Point, ICell> result=new HashMap<>();
-        for(Map.Entry<Point,ICellState> entry:board){
-            cs=entry.getValue();
-            p=entry.getKey();
-            if(!cs.isOpen()) {
-                if (cs.getFlag() != Cell.CLOSED) {
-                    result.put(p, cs.getFlag());
-                } else {
-                    result.put(p, Cell.CLOSED);
-                }
-            }else {
-                result.put(p, cs.getCell());
-            }
-            if (flag==OPEN_BOMB_AS_BOMB) {
-                if (cs.getCell()==BOMB_TYPE)
-                    result.put(p, BOMB_TYPE);
-                continue;
-            }
-            if (flag==OPEN_BOMB_AS_EXPLOSION) {
-                if (cs.getCell()==BOMB_TYPE)
-                    result.put(p, Cell.EXPLOSION);
+        for(Map.Entry<Point,ICellState> entry:board) {
+            cs = entry.getValue();
+            if (cs.getCell() == BOMB_TYPE) {
+                if (flag == OPEN_BOMB_AS_EXPLOSION) cs.setCell(Cell.EXPLOSION);
+
+                cs.setOpened();
             }
         }
-        return result;
     }
 
     private void startGame(Point point) {
-        generator.generateMines(board,point);
+        generator.generateMines(point);
         firstUserPoint=false;
-        threadThatUpdateGameTime =new Thread(new Runnable(){
-            public void run(){
-                while (!gameOver){
-                    updateGameTime();
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+        threadThatUpdateGameTime =new Thread(() -> {
+            while (!gameOver){
+                updateGameTime();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         });
         threadThatUpdateGameTime.start();
         beginTime=System.currentTimeMillis();
     }
+
     private void saveCurrentGameTime(){
         //посчитал что время дешевле всего хранить в милисекундах а не в объекте
         //тем более что вызов этого метода происходит 1 раз за игру
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                LocalTime locGameTime = LocalTime.ofSecondOfDay((currentGameTime)/1000);
-                String recordTime=locGameTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-                LocalDateTime localDateTime=LocalDateTime.now();
-                Player p=new Player(recordTime,localDateTime.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss")));
-                FileRecords.write(p);
-            }
+        new Thread(() -> {
+            LocalTime locGameTime = LocalTime.ofSecondOfDay((currentGameTime)/1000);
+            String recordTime=locGameTime.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+            LocalDateTime localDateTime=LocalDateTime.now();
+            Player p=new Player(recordTime,localDateTime.format(DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm:ss")));
+            FileRecords.write(p);
         }).start();
     }
     private void joinThreadThatUpdateGameTime() {

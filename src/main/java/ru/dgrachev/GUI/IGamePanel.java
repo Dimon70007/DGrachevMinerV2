@@ -1,18 +1,21 @@
 package ru.dgrachev.GUI;
 
-import ru.dgrachev.game.ICell;
+import ru.dgrachev.game.Board;
 
 import java.awt.*;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
-import java.util.Map;
 
 /**
  * Created by OTBA}|{HbIu` on 10.10.16.
  */
 public interface IGamePanel {
 
-    void drawBoard(Map<Point,ICell> cells);
+    void drawBoard();
+
+    void drawBoard(Board board);
+
+    Board getBoard();
 
     Dimension getPanelSize();
 

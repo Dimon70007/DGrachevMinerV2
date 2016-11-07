@@ -14,21 +14,24 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static ru.dgrachev.game.GameParameters.BOMB_TYPE;
 import static ru.dgrachev.game.GameParameters.currentBoardSize;
-import static ru.dgrachev.game.GeneratorTest.board;
-import static ru.dgrachev.game.GeneratorTest.generator;
 
 /**
  * Created by OTBA}|{HbIu` on 20.10.16.
  */
 public class GameTest {
-    GamePanel gp=new GamePanel();
-    IGUI gui=new GUI(gp);
-    Point p=new Point(1,1);
+    Board board;
+    GamePanel gp;
+    IGUI gui;
     Game game;
+    Point p=new Point(1,1);
+
     @Test
     public void checkLooseTest() throws Exception {
         GameParameters.currentBombsCount= (int) (currentBoardSize.x*currentBoardSize.y-2);
-        game=new Game(gui);
+        board=new Board();
+        gp=new GamePanel(board);
+        gui=new GUI(gp);
+        game=new Game(board,gui);
         game.openCell(p);
         try {
 //            game.openCell(new Point(1,2));
@@ -42,6 +45,9 @@ public class GameTest {
     @Test
     public void checkWinTest() throws Exception {
         GameParameters.currentBombsCount=1;
+        board=new Board();
+        gp=new GamePanel(board);
+        gui=new GUI(gp);
         game=new Game(board,gui);
         int maxAllowClosedCells=0;
         try {
@@ -69,7 +75,8 @@ public class GameTest {
     }
 
     private void checkWinHelper() throws WinException {
-        generator.generateMines(board,p);
+
+        new Generator(BOMB_TYPE,this.board).generateMines(p);
 
         ICellState cellState=board.getCellState(p);
         try {

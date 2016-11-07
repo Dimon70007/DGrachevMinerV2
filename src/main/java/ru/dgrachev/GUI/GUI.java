@@ -1,8 +1,8 @@
 package ru.dgrachev.GUI;
 
+import ru.dgrachev.game.Board;
 import ru.dgrachev.game.Game;
 import ru.dgrachev.game.GameParameters;
-import ru.dgrachev.game.ICell;
 import ru.dgrachev.userinput.KeyGamePanelInput;
 import ru.dgrachev.userinput.MouseGamePanelInput;
 import ru.dgrachev.userinput.UserGUIInput;
@@ -10,7 +10,6 @@ import ru.dgrachev.userinput.UserGUIInput;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.util.Map;
 
 /**
  * Created by OTBA}|{HbIu` on 12.10.16.
@@ -54,13 +53,23 @@ public class GUI extends JFrame implements IGUI{
     }
 
     @Override
-    public void drawBoard(Map<Point, ICell> cells) {
-        gamePanel.drawBoard(cells);
+    public void drawBoard() {
+        gamePanel.drawBoard();
+    }
+
+    @Override
+    public void drawBoard(Board board) {
+        gamePanel.drawBoard(board);
     }
 
     @Override
     public Dimension getPanelSize() {
         return gamePanel.getPanelSize();
+    }
+
+    @Override
+    public Board getBoard() {
+        return gamePanel.getBoard();
     }
 
     public void init(){
@@ -80,11 +89,12 @@ public class GUI extends JFrame implements IGUI{
 
 
     public void start() {
-        Game game=new Game(this);
-        MouseGamePanelInput mInput=new MouseGamePanelInput(gamePanel,game);
-        KeyGamePanelInput kInput=new KeyGamePanelInput(gamePanel,game);
-        UserGUIInput uGInput=new UserGUIInput(this,game);
-
+        new Thread(() -> {
+            Game game=new Game(gamePanel.getBoard(), GUI.this);
+            MouseGamePanelInput mInput=new MouseGamePanelInput(gamePanel,game);
+            KeyGamePanelInput kInput=new KeyGamePanelInput(gamePanel,game);
+            UserGUIInput uGInput=new UserGUIInput(GUI.this,game);
+        }).start();
     }
 
     public void addActionListener(ActionListener listener) {

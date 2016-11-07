@@ -6,7 +6,7 @@ package ru.dgrachev.game;
 public class CellState implements ICellState {
     private boolean isOpen;
     private int flag;
-    private final ICell cell;
+    private ICell cell;
 
     public CellState(final ICell cell) {
         this.cell = cell;
@@ -57,4 +57,15 @@ public class CellState implements ICellState {
     public ICell getCell() {
         return cell;
     }
+
+    @Override
+    public ICell setCell(ICell cell) {
+        if (cell != null) {
+            ICell tmp=this.cell;
+            this.cell = cell;
+            return tmp;
+        }
+        return null;
+    }
+
 }

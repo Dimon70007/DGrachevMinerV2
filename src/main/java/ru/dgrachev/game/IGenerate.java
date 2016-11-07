@@ -7,9 +7,9 @@ import java.awt.*;
  */
 public interface IGenerate {
 
-    void generateBoard(Board board);
+    void generateBoard();
 
-     void generateMines(Board board, Point userPoint);
+     void generateMines( Point userPoint);
 
 // жуткая штука - интерфейсы - не разрешают создавать статик методы...
     //оно и понятно ))) ведь статик методы - методы уровня класса, а не инстанса

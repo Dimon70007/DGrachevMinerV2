@@ -7,7 +7,7 @@
     <groupId>ru.dgrachev</groupId>
     <artifactId>DGrachevMinerV2</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2</version>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>

@@ -17,11 +17,11 @@ import static ru.dgrachev.game.GameParameters.currentBombsCount;
  */
 public class GeneratorTest {
     final static Board board=new Board();
-    final static Generator generator= new Generator(BOMB_TYPE);
+    final static Generator generator= new Generator(BOMB_TYPE, board);
 
     @Before
     public void setUp() throws Exception {
-        generator.generateBoard(board);
+        generator.generateBoard();
     }
 
     @Test
@@ -32,7 +32,7 @@ public class GeneratorTest {
 
     @Test
     public void whenMinesGeneratedThenMinesCountEqualsBombCount() throws Exception {
-        generator.generateMines(board,new Point(5,5));
+        generator.generateMines(new Point(5,5));
         searchOnBoard(Cell.BOMB, currentBombsCount);
     }
 

@@ -7,14 +7,17 @@ import java.util.Random;
  * Created by OTBA}|{HbIu` on 12.10.16.
  */
 public class Generator implements IGenerate {
-    private ICell bombType;
+    private final ICell bombType;
 
-    public Generator(ICell bombType) {
+    private final Board board;
+
+    public Generator(ICell bombType, Board board) {
         this.bombType = bombType;
+        this.board = board;
     }
 
     @Override
-    public void generateBoard(Board board) {
+    public void generateBoard() {
             Point size=board.getSize();
         for(int x=0;x<size.x;x++){
             for (int y=0;y<size.y;y++){
@@ -24,7 +27,7 @@ public class Generator implements IGenerate {
     }
 
     @Override
-    public void generateMines(Board board, Point userPoint) {
+    public void generateMines(Point userPoint) {
         Random r=new Random();
         int maxX=board.getSize().x;
         int maxY=board.getSize().y;
@@ -37,7 +40,10 @@ public class Generator implements IGenerate {
                 continue;
             }
                 //if bomb allready exist - i-- and continue
-            if(board.getCellState(newPoint).getCell()== bombType) {
+            ICell ce=board.getCellState(newPoint).getCell();
+            if (ce==null)
+                System.out.println(ce);
+            if(ce== bombType) {
                 i--;
                 continue;
             }

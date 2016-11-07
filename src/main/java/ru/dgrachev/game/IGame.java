@@ -10,7 +10,7 @@ import java.awt.*;
  */
 public interface IGame {
 
-    IBoard board = null;
+//    IBoard board = null;
 
     void checkLoose(ICellState cellState) throws LooseException;
 
@@ -19,10 +19,10 @@ public interface IGame {
     void openCell(Point point);
 
     void setFlag(Point point);
-
-    default Point getBoardSize(){
-     return GameParameters.currentBoardSize;
-    }
+//
+//    default Point getBoardSize(){
+//     return GameParameters.currentBoardSize;
+//    }
 
     void updateGameTime();
 
